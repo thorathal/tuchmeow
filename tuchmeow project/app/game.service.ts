@@ -1,3 +1,6 @@
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+
 export class GameService {
     getItems() {
         return [
@@ -27,6 +30,6 @@ export class GameService {
                 id: "SC2",
                 imageUrl: "http://www.battlenet.com.cn/forums/static/images/game-logos/game-logo-sc2.png"
             }
-        ]
+        ];
     }
 }

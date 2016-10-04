@@ -1,4 +1,4 @@
-System.register(['angular2/core', './game-page.component', './streamer-page.component', './video-page.component', 'angular2/router'], function(exports_1, context_1) {
+System.register(['angular2/core', './game-page.component', './video-page.component', 'angular2/router'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './game-page.component', './streamer-page.comp
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, game_page_component_1, streamer_page_component_1, video_page_component_1, router_1;
+    var core_1, game_page_component_1, video_page_component_1, router_1;
     var AppComponent;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(['angular2/core', './game-page.component', './streamer-page.comp
             },
             function (game_page_component_1_1) {
                 game_page_component_1 = game_page_component_1_1;
-            },
-            function (streamer_page_component_1_1) {
-                streamer_page_component_1 = streamer_page_component_1_1;
             },
             function (video_page_component_1_1) {
                 video_page_component_1 = video_page_component_1_1;
@@ -37,13 +34,14 @@ System.register(['angular2/core', './game-page.component', './streamer-page.comp
                     core_1.Component({
                         selector: 'my-app',
                         template: "\n        <div class=\"body\">\n            <router-outlet></router-outlet>\n        </div>\n    ",
-                        styles: ["\n        .body {\n            width: 90%;\n            margin-left: auto;\n            margin-right: auto;\n            margin-top: 2%;\n        }  \n    "],
+                        styles: ["\n        .body {\n            width: 90%;\n            margin-left: auto;\n            margin-right: auto;\n            margin-top: 2%;\n        }\n    "],
                         directives: [router_1.ROUTER_DIRECTIVES]
                     }),
                     router_1.RouteConfig([
                         { path: '/games', name: 'Games', component: game_page_component_1.GamePageComponent, useAsDefault: true },
-                        { path: '/games/:id', name: 'Game', component: streamer_page_component_1.StreamerPageComponent },
-                        { path: '/video', name: 'Video', component: video_page_component_1.VideoPageComponent },
+                        { path: '/games/:game', name: 'Game', component: game_page_component_1.GamePageComponent },
+                        { path: '/games/:game/:channel', name: 'Channel', component: game_page_component_1.GamePageComponent },
+                        { path: '/games/:game/:channel/:videoid', name: 'Video', component: video_page_component_1.VideoPageComponent },
                         { path: '/*other', name: 'Other', redirectTo: ['Games'] }
                     ]), 
                     __metadata('design:paramtypes', [])

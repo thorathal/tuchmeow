@@ -1,0 +1,16 @@
+Video API
+
+Search Youtube (Normal Search)
+https://developers.google.com/youtube/v3/docs/search/list#try-it
+
+
+Video Comments API
+https://developers.google.com/apis-explorer/#search/youtube/youtube/v3/youtube.commentThreads.list
+
+
+Channel Main Page
+https://developers.google.com/youtube/v3/docs/channels/list#try-it
+
+Channel Playlists
+https://developers.google.com/youtube/v3/docs/playlists/list#try-it
+https://developers.google.com/youtube/v3/docs/channelSections/list#try-it

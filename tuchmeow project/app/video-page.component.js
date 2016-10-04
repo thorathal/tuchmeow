@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/router', './game-menu.component', './video.service'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/router', './video.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/router', './game-menu.component', '.
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, router_1, game_menu_component_1, video_service_1;
+    var core_1, router_1, video_service_1;
     var VideoPageComponent;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(['angular2/core', 'angular2/router', './game-menu.component', '.
             },
             function (router_1_1) {
                 router_1 = router_1_1;
-            },
-            function (game_menu_component_1_1) {
-                game_menu_component_1 = game_menu_component_1_1;
             },
             function (video_service_1_1) {
                 video_service_1 = video_service_1_1;
@@ -50,9 +47,9 @@ System.register(['angular2/core', 'angular2/router', './game-menu.component', '.
                 }
                 VideoPageComponent = __decorate([
                     core_1.Component({
-                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n        <game-menu></game-menu>\n        <div class=\"space\"></div>\n        <iframe width=\"99.5%\" height=\"65%\" src=\"https://www.youtube.com/embed/<insert-youtube-video-id-here>\" frameborder=\"0\" allowfullscreen></iframe>\n    ",
+                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n        <div class=\"space\"></div>\n        <iframe width=\"99.5%\" height=\"65%\" src=\"https://www.youtube.com/embed/<insert-youtube-video-id-here>\" frameborder=\"0\" allowfullscreen></iframe>\n    ",
                         styles: ["\n        .space {\n            height: 8%;\n        }\n    "],
-                        directives: [router_1.ROUTER_DIRECTIVES, game_menu_component_1.GameMenuComponent],
+                        directives: [router_1.ROUTER_DIRECTIVES],
                         providers: [video_service_1.VideoService]
                     }), 
                     __metadata('design:paramtypes', [])

@@ -1,6 +1,5 @@
 import {Component} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
-import {GameMenuComponent} from './game-menu.component';
 import {VideoService} from './video.service';
 
 
@@ -28,7 +27,6 @@ import {VideoService} from './video.service';
         <div *ngIf="isLoading">
             <i class="fa fa-spinner fa-spin fa-3x"></i>
         </div>
-        <game-menu></game-menu>
         <div class="space"></div>
         <iframe width="99.5%" height="65%" src="https://www.youtube.com/embed/<insert-youtube-video-id-here>" frameborder="0" allowfullscreen></iframe>
     `,
@@ -37,7 +35,7 @@ import {VideoService} from './video.service';
             height: 8%;
         }
     `],
-    directives: [ROUTER_DIRECTIVES, GameMenuComponent],
+    directives: [ROUTER_DIRECTIVES],
     providers: [VideoService]
 })
 export class VideoPageComponent{

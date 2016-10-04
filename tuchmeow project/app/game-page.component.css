@@ -1,0 +1,31 @@
+.wrapper {
+    display:inline-block;
+    vertical-align:top;
+    padding-right: 10px;
+    padding: 3px 5px;
+}
+.large {
+	width: 20%;
+    height: 16%;
+}
+.small {
+	width: 14%;
+    height: 12%;
+}
+
+#wrapper .hovertext {
+    width: 150px;
+    position:relative;
+    bottom:30px;
+    left:0px;
+    background-color: gray;
+    visibility:hidden;
+}
+
+.media-object {
+    width: 100%;
+    height: 100%;
+}
+.cell {
+    cursor: pointer;
+}

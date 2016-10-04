@@ -7,7 +7,7 @@ import {ROUTER_DIRECTIVES} from 'angular2/router';
     template: `
         Video Suggestions <br/>
         <div id="wrapper" class="wrapper" *ngFor="#data of data">
-            <div [routerLink]="['Video']" class="cell">
+            <div [routerLink]="['Video'], {game: "hs", streamer: "trumpsc", videoid: "D5EiqCCFFgM"}" class="cell">
             <img class="media-object" src="{{ ytThumbnailStart + data.id + ytThumbnailEnd }}">
         </div>
     `,
