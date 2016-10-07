@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Observable', 'rxjs/add/observable/forkJoin', './youtube.service', './game.service'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Observable', 'rxjs/add/observable/forkJoin', './services/youtube.service', './services/game.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -48,47 +48,40 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Obse
                     // get data on games
                     this.games = this._gameService.getItems();
                     this.isLoading = false;
-                    // If channel and game has been chosen.Get video data from the channel.
-                    var game = this._routeParams.get('game');
-                    var channel = this._routeParams.get('channel');
-                    if (channel) {
-                        console.log("Trying to load Videos; Params- Game: " + game + ",  Channel:" + channel);
+                    // If channel and game has been chosen.Get video data from the channel. Will be moved to video.component
+                    this.currentGame = this._routeParams.get('game');
+                    this.currentChannel = this._routeParams.get('channelid');
+                    if (this.currentChannel) {
                         this.isLoading = true;
                         this.gameSelected = true;
                         this.channelSelected = true;
                         Observable_1.Observable.forkJoin([
-                            this._youtubeService.getChannels(game),
-                            this._youtubeService.getVideos(channel)
+                            this._youtubeService.getChannels(this.currentGame),
+                            this._youtubeService.getVideos(this.currentChannel)
                         ])
                             .subscribe(function (res) {
-                            console.log("Channels and Videos Successfully loaded: " + res[0] + res[1]);
-                            _this.games = res[0];
-                            _this.videos = res[1];
-                        }, null, function () { _this.isLoading = false; });
+                            _this.channels = res[0].items;
+                            _this.videos = res[1].items;
+                        }, function (err) {
+                            _this.isLoading = false;
+                            console.log(err);
+                        }, function () { _this.isLoading = false; });
                     }
                     else 
-                    // If only a game has been chosen. Get data 'our' list of channels on the game.
-                    if (game) {
+                    // If only a game has been chosen. Get data 'our' list of channels on the game. Will be moved to channel.component
+                    if (this.currentGame) {
                         this.isLoading = true;
                         this.gameSelected = true;
-                        console.log("Trying to load Channels; Params- Game:" + game);
-                        this._youtubeService.getChannels(game)
+                        this._youtubeService.getChannels(this.currentGame)
                             .subscribe(function (res) {
-                            console.log("Channels succesfully loaded, title of first channel: " + res.items[0].snippet.title + " /n Array length is " + res.items.length);
                             _this.channels = res.items;
-                        }, null, function () { _this.isLoading = false; });
+                        });
                     }
-                    //        Observable.forkJoin( this._streamerService.getItems() )
-                    //                        .subscribe(
-                    //                            res => this.streamers = res,
-                    //                            null,
-                    //                            () => { this.isLoading = false; } );
-                    console.log(this._routeParams.get('game') + this._routeParams.get('channel'));
                 };
                 GamePageComponent = __decorate([
                     core_1.Component({
-                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n        \n        <nav class=\"navbar\">\n            <ul class=\"wrapper large\" *ngFor=\"#game of games\">\n                <li id=\"{{ game.id }}\" [routerLink]=\"['Game', { game: game.id }]\">\n                    <form class=\"navbar-form\">\n                        <a class=\"\"><img class=\" cell media-object\" src=\"{{ game.imageUrl }}\"></a>\n                    </form>\n                </li>\n            </ul>\n        </nav>\n        \n        \n        <div *ngIf='gameSelected'>\n            <nav class=\"navbar\">\n                <ul class=\"navbar wrapper small\" *ngFor=\"#channel of channels; #i = index\">\n                    <li class=\"cell\" [routerLink]=\"['Channel', { game: games[i].id, channel: channel.id }]\">\n                        <a><img class=\"media-object\" src=\"{{ channel.snippet.thumbnails.medium }}\"></a>\n                    </li>\n                </ul>\n            </nav>\n        </div>   \n        \n        <h2>Streamers</h2>\n        <div *ngIf=\"channels\" style=\"background-color: pink;\">{{ channels[0].snippet.title }}</div>\n        <br/>\n        <br/>\n         ",
-                        styleUrls: ['app/game-page.component.css'],
+                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n        <nav>\n            <ul class=\"games\" *ngFor=\"#game of games\">\n                <li [routerLink]=\"['Game', { game: game.id }]\">\n                    <a title=\"{{ game.name }}\">\n                        <img class=\" cell media-object\" src=\"{{ game.imageUrl }}\">\n                    </a>\n                </li>\n            </ul>\n        </nav>\n        \n        <!-- Will be moved to its own component: channel.component -->\n        <div *ngIf=\"gameSelected\">\n            <nav>\n                <ul class=\"channels\" *ngFor=\"#channel of channels\">\n                    <li class=\"cell\" [routerLink]=\"['Channel', { game: currentGame, channelid: channel.id }]\">\n                        <a title=\"{{ channel.snippet.description }}\">\n                            <img class=\"media-object\" src=\"{{ channel.snippet.thumbnails.medium.url }}\">\n                        </a>\n                    </li>\n                </ul>\n            </nav>\n        </div>\n        <br/>\n        \n        <!-- Will be moved to its own component: videos.component -->\n        <div class=\"video-area\" *ngIf=\"channelSelected\">\n            <h2>Videos</h2>\n            \n            <ul class=\"videos\" *ngFor=\"#video of videos\">\n                <li>\n                    <div class=\"yt-lockup\">\n                        <a area-hidden=\"true\" [routerLink]=\"['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]\">   \n                            <img class=\"media-object\" src=\"{{ video.snippet.thumbnails.medium.url }}\">\n                            <span class=\"video-time\" aria-hidden=\"true\"> \n                                {{ video.id.videoId }}\n                            </span>\n                        </a>    \n                    </div>\n                    <a class=\"textwrap\" title=\"{{ video.snippet.title }}\" [routerLink]=\"['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]\">\n                            {{ video.snippet.title }}\n                    </a>\n                </li>\n            </ul>\n           \n        </div>\n        <br/>\n        <br/>\n            \n         ",
+                        styleUrls: ['app/css/game-page.component.css'],
                         providers: [game_service_1.GameService, youtube_service_1.YoutubeService, http_1.HTTP_PROVIDERS],
                         directives: [router_1.ROUTER_DIRECTIVES]
                     }), 

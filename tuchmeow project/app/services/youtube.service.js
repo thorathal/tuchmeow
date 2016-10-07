@@ -31,41 +31,73 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                     // specify even more what information you want. Here: channel ID, title and description.
                     this.CHANNELDATA_FIELDS = "&fields=items(id%2Csnippet(title%2Cdescription%2Cthumbnails))";
                     // channel ID's for (manual lookup):
+                    this.csgoChannelIDs = 'UCayBk2oaTaiUw1Z4r_VKuAg' + '%2C' +
+                        'UCnD-frIn-2URPLnDWNN6UsQ' + '%2C' +
+                        'UCs3GloeEzu5rDlQlSLGrr4A' // SparklesProduction
+                    ;
+                    this.dota2ChannelIDs = 'UCAfhB2VCVnjiJ8FhcDYtFAQ' // UCAfhB2VCVnjiJ8FhcDYtFAQ
+                    ;
+                    this.lolChannelIDs = 'UCvqRdlKsE5Q8mf8YXbdIJLw' + '%2C' +
+                        'UCdOWyp25T0HDtjpnV2LpIyw' + '%2C' +
+                        'UCmIGYuRNVWJT7VsEMi4MXfA' // ReplaysLOLHighlights
+                    ;
                     this.hearthstoneChannelIDs = 'UCsQnAt5I56M-qx4OgCoVmeA' + '%2C' +
                         'UC-kezFAw46x-9ctBUqVe86Q' + '%2C' +
                         'UCeBMccz-PDZf6OB4aV6a3eA' // kripparrian
                     ;
-                    // Search on channel videos, (newest videos) Keyword is the channel ID.
-                    this.VIDEODATA_BASE_URL = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=";
-                    // Specify number and order of videos, and specify information from fields. Here: 5 videos ordered by date, with videoId, title and thumbnails
-                    this.VIDEODATA_FIELDS = "&maxResults=5&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails))&key=";
+                    this.starcraftChannelIDs = 'UCZNTsLA6t6bRoj-5QRmqt_w' + '%2C' +
+                        'UCb-Rder8Hs869eVIJIzswBA' + '%2C' +
+                        'UCTcMm4NJYBYXkpOfqXDaEFg' // UCTcMm4NJYBYXkpOfqXDaEFg
+                    ;
                     // Search on channel playlists
                     // https://developers.google.com/apis-explorer/#search/youtube/youtube/v3/youtube.playlists.list
                     // The Youtube API Key, required for accessing data from the API.
                     this.API_KEY = "&key=AIzaSyCuHiuUWDnn68G5bNCk1VxJm7UWKpbD1FU";
+                    // Search on channel videos, (newest videos) Keyword is the channel ID.
+                    this.VIDEODATA_BASE_URL = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=";
+                    // Specify number and order of videos, and specify information from fields. Here: 5 videos ordered by date, with videoId, title and thumbnails
+                    this.VIDEODATA_FIELDS = "&maxResults=15&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))";
+                    // Search on specific videos and get their durations.
+                    this.VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails";
+                    this.VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
                 }
                 YoutubeService.prototype.getChannels = function (gameType) {
                     var request = "";
                     switch (gameType) {
                         case 'CSGO':
+                            request = this.CHANNELDATA_BASE_URL + this.csgoChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
                             break;
                         case 'DOTA2':
+                            request = this.CHANNELDATA_BASE_URL + this.dota2ChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
                             break;
                         case 'LOL':
+                            request = this.CHANNELDATA_BASE_URL + this.lolChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
                             break;
                         case 'HS':
                             request = this.CHANNELDATA_BASE_URL + this.hearthstoneChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
-                            console.log(request);
                             break;
                         case 'SC2':
+                            request = this.CHANNELDATA_BASE_URL + this.starcraftChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
                             break;
                     }
+                    console.log("Get the channels: " + request);
                     return this._http.get(request)
                         .map(function (res) { return res.json(); });
                 };
                 YoutubeService.prototype.getVideos = function (channelID) {
                     var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.API_KEY;
-                    console.log(request);
+                    console.log("Getting latest videos: " + request);
+                    return this._http.get(request)
+                        .map(function (res) { return res.json(); });
+                };
+                YoutubeService.prototype.getVideoDurations = function (videoIDs) {
+                    var ids = "";
+                    for (var i = 0; i < videoIDs.length; i++) {
+                        ids += videoIDs[i];
+                        if (i < videoIDs.length - 1)
+                            ids += "%2C";
+                    }
+                    var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
                     return this._http.get(request)
                         .map(function (res) { return res.json(); });
                 };

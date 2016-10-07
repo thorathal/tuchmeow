@@ -1,4 +1,4 @@
-System.register(['angular2/core', './game-page.component', './video-page.component', 'angular2/router'], function(exports_1, context_1) {
+System.register(['angular2/core', './game-page.component', 'angular2/router'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', './game-page.component', './video-page.compone
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, game_page_component_1, video_page_component_1, router_1;
+    var core_1, game_page_component_1, router_1;
     var AppComponent;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(['angular2/core', './game-page.component', './video-page.compone
             },
             function (game_page_component_1_1) {
                 game_page_component_1 = game_page_component_1_1;
-            },
-            function (video_page_component_1_1) {
-                video_page_component_1 = video_page_component_1_1;
             },
             function (router_1_1) {
                 router_1 = router_1_1;
@@ -40,8 +37,8 @@ System.register(['angular2/core', './game-page.component', './video-page.compone
                     router_1.RouteConfig([
                         { path: '/games', name: 'Games', component: game_page_component_1.GamePageComponent, useAsDefault: true },
                         { path: '/games/:game', name: 'Game', component: game_page_component_1.GamePageComponent },
-                        { path: '/games/:game/:channel', name: 'Channel', component: game_page_component_1.GamePageComponent },
-                        { path: '/games/:game/:channel/:videoid', name: 'Video', component: video_page_component_1.VideoPageComponent },
+                        { path: '/games/:game/:channelid', name: 'Channel', component: game_page_component_1.GamePageComponent },
+                        { path: '/games/:game/:channelid/:videoid', name: 'Video', component: game_page_component_1.GamePageComponent },
                         { path: '/*other', name: 'Other', redirectTo: ['Games'] }
                     ]), 
                     __metadata('design:paramtypes', [])

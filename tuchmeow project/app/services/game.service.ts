@@ -1,8 +1,10 @@
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
+import {Game} from '../interfaces/game';
+
 export class GameService {
-    getItems() {
+    getItems() : Game[] {
         return [
             {
                 name: "Counter Strike: Global Offensive",
@@ -12,17 +14,17 @@ export class GameService {
             {
                 name: "Defense of the Ancients 2",
                 id: "DOTA2",
-                imageUrl: "http://107.170.126.251/wp-content/uploads/2014/04/dota-2-logo.jpg"
+                imageUrl: "http://vignette3.wikia.nocookie.net/theamazingworldofgumball/images/d/dd/Logo_Dota_2.png/revision/latest?cb=20130329094246"
             },
             {
                 name: "League of Legends",
                 id: "LOL",
-                imageUrl: "http://vignette3.wikia.nocookie.net/fantendo/images/c/cf/LoL_logo.png/revision/latest?cb=20160501013458"
+                imageUrl: "https://upload.wikimedia.org/wikipedia/en/7/77/League_of_Legends_logo.png"
             },
             {
                 name: "Hearthstone",
                 id: "HS",
-                imageUrl: "http://www.pixel.tv/wp-content/uploads/hearthstone-heroes-of-warcraft.jpg"
+                imageUrl: "http://us.battle.net/hearthstone/static/images/logos/logo.png?v=58-15"
                 
             },
             {

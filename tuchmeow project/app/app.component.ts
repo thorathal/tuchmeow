@@ -1,6 +1,5 @@
 import {Component} from 'angular2/core';
 import {GamePageComponent} from './game-page.component';
-import {VideoPageComponent} from './video-page.component';
 import {RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
 
 @Component({
@@ -23,8 +22,8 @@ import {RouteConfig, ROUTER_DIRECTIVES} from 'angular2/router';
 @RouteConfig([
     { path: '/games', name: 'Games', component: GamePageComponent, useAsDefault: true },
     { path: '/games/:game', name: 'Game', component: GamePageComponent },
-    { path: '/games/:game/:channel', name: 'Channel', component: GamePageComponent },
-    { path: '/games/:game/:channel/:videoid', name: 'Video', component: VideoPageComponent },
+    { path: '/games/:game/:channelid', name: 'Channel', component: GamePageComponent },
+    { path: '/games/:game/:channelid/:videoid', name: 'Video', component: GamePageComponent },
     { path: '/*other', name: 'Other', redirectTo: ['Games'] }
 ])
 export class AppComponent { }

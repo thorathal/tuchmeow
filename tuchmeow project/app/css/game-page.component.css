@@ -1,0 +1,77 @@
+.yt-lockup {
+	display: block;
+	position: relative;
+	font-size: 11px;
+	color: #767676;
+	line-height: 1.3em;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+}
+.video-time {
+	margin-top: 0;
+	margin-right: 0;
+	padding: 0 4px;
+	font-weight: 500;
+	font-size: 11px;
+	background-color: #000;
+	color: #fff!important;
+	height: 14px;
+	line-height: 14px;
+	opacity: .75;
+	vertical-align: top;
+	display: inline-block;
+	position: absolute;
+	right: 2px;
+	bottom: 2px;
+}
+.textwrap {
+	word-wrap: break-word;
+	text-overflow: ellipsis;
+}
+.video-area {
+	background-color: rgba(10,10,10,.3);
+	padding: 0 5px 25px 5px;
+}
+
+.games {
+	width: 20%;
+    height: 12%;
+}
+.channels {
+	padding-left: 15px;
+	width: 14.2857%;
+    height: 12%;
+}
+.videos {
+	width: 20%;
+	height: 15%;
+}
+
+.media-object {
+    width: 100%;
+    height: 100%;
+}
+
+ul {
+	display: inline-block;
+    vertical-align:top;
+    padding-right: 10px;
+    padding: 3px 5px;
+    padding-bottom: 15px;
+}
+li, div, a, span{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	background: transparent;
+	list-style-type:none;
+}
+a {
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 100%;
+	background: transparent;
+}
