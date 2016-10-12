@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import {Game} from '../interfaces/game';
 
 export class GameService {
-    getItems() : Game[] {
+    getItems() : Game[] { 
         return [
             {
                 name: "Counter Strike: Global Offensive",

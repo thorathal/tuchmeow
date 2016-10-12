@@ -12,28 +12,30 @@ import {GameService} from './services/game.service';
     template: `
         <div *ngIf="isLoading">
             <i class="fa fa-spinner fa-spin fa-3x"></i>
-        </div>
-        <nav>
-            <ul class="games" *ngFor="#game of games">
-                <li [routerLink]="['Game', { game: game.id }]">
-                    <a title="{{ game.name }}">
-                        <img class=" cell media-object" src="{{ game.imageUrl }}">
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        </div>    
+        <ul class="games" *ngFor="#game of games">
+            <li [routerLink]="['Game', { game: game.id }]">
+                <a title="{{ game.name }}">
+                    <img class=" cell media-object" src="{{ game.imageUrl }}">
+                </a>
+            </li>
+        </ul>
+        
         
         <!-- Will be moved to its own component: channel.component -->
         <div *ngIf="gameSelected">
-            <nav>
-                <ul class="channels" *ngFor="#channel of channels">
-                    <li class="cell" [routerLink]="['Channel', { game: currentGame, channelid: channel.id }]">
-                        <a title="{{ channel.snippet.description }}">
-                            <img class="media-object" src="{{ channel.snippet.thumbnails.medium.url }}">
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            
+            <ul class="channels" *ngFor="#channel of channels">
+                <li class="lockup">
+                    <a title="{{ channel.snippet.description }}" [routerLink]="['Channel', { game: currentGame, channelid: channel.id }]">
+                        <img class="media-object" src="{{ channel.snippet.thumbnails.medium.url }}">
+                        <span class="video-time" aria-hidden="true"> 
+                            {{ channel.snippet.title }}
+                        </span>
+                    </a>
+                </li>
+            </ul>
+            
         </div>
         <br/>
         
@@ -43,7 +45,7 @@ import {GameService} from './services/game.service';
             
             <ul class="videos" *ngFor="#video of videos">
                 <li>
-                    <div class="yt-lockup">
+                    <div class="lockup">
                         <a area-hidden="true" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]">   
                             <img class="media-object" src="{{ video.snippet.thumbnails.medium.url }}">
                             <span class="video-time" aria-hidden="true"> 
@@ -51,9 +53,11 @@ import {GameService} from './services/game.service';
                             </span>
                         </a>    
                     </div>
-                    <a class="textwrap" title="{{ video.snippet.title }}" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]">
-                            {{ video.snippet.title }}
-                    </a>
+                    <div class="textwrap">
+                            <a title="{{ video.snippet.title }}" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]">
+                                    <b>{{ video.snippet.title }}</b>
+                            </a>
+                    </div>
                 </li>
             </ul>
            
@@ -94,20 +98,23 @@ export class GamePageComponent implements OnInit{
             this.isLoading = true;
             this.gameSelected = true;
             this.channelSelected = true;
-            Observable.forkJoin( [
-                    this._youtubeService.getChannels(this.currentGame),
-                    this._youtubeService.getVideos(this.currentChannel)
-                    ])
-                        .subscribe(
-                            res => {
-                                this.channels = res[0].items;
-                                this.videos = res[1].items;
-                            },
-                            err => { 
-                                this.isLoading = false;
-                                console.log(err) 
-                            },
-                            () => { this.isLoading = false; });
+            Observable.forkJoin([
+                        this._youtubeService.getChannels(this.currentGame),
+                        this._youtubeService.getVideos(this.currentChannel, this.currentGame)           
+                    ]).subscribe(
+                        res => {
+                            this.channels = res[0].items;
+                            this.videos = res[1].items;
+                        },
+                        err => { 
+                            this.isLoading = false;
+                            console.log(err);
+                        },
+                        () => { 
+                            this.isLoading = false; 
+                        } 
+                    );                                
+                        
                         
         } else
         // If only a game has been chosen. Get data 'our' list of channels on the game. Will be moved to channel.component
@@ -116,9 +123,12 @@ export class GamePageComponent implements OnInit{
             this.gameSelected = true;
             this._youtubeService.getChannels(this.currentGame)
                     .subscribe(
-                        res => { 
-                            this.channels = res.items 
-                            } );
+                        res => this.channels = res.items,
+                        err => {
+                            console.error(err);
+                            this.isLoading = false;
+                        },
+                        () => this.isLoading = false );
         }
         
     }

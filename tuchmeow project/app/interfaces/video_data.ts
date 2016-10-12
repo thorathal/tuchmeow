@@ -1,4 +1,4 @@
-export interface Video_Response{
+export interface Video_Data{
     items: [{
         id: {
             videoId: string;

@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxjs/add/operator/mergeMap'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/operator/map', 'rxjs/add/operator/mergeMap'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1;
+    var core_1, http_1, Observable_1;
     var YoutubeService;
     return {
         setters:[
@@ -20,86 +20,173 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
             function (http_1_1) {
                 http_1 = http_1_1;
             },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
+            },
             function (_1) {},
             function (_2) {}],
         execute: function() {
             YoutubeService = (function () {
                 function YoutubeService(_http) {
                     this._http = _http;
-                    // Search on general channel data: Title, description, ect. Keyword is the channel ID
+                    // The Youtube API Key, required for accessing data from the API.
+                    this.API_KEY = "&key=AIzaSyCuHiuUWDnn68G5bNCk1VxJm7UWKpbD1FU";
+                    /***********************
+                     *  getChannels Method
+                     */
+                    // Base of the URL "get request" to the youtube API, search on general channel data: Title, 
+                    // description, ect. Keyword is the channel ID
                     this.CHANNELDATA_BASE_URL = "https://www.googleapis.com/youtube/v3/channels?part=snippet&id=";
                     // specify even more what information you want. Here: channel ID, title and description.
                     this.CHANNELDATA_FIELDS = "&fields=items(id%2Csnippet(title%2Cdescription%2Cthumbnails))";
                     // channel ID's for (manual lookup):
-                    this.csgoChannelIDs = 'UCayBk2oaTaiUw1Z4r_VKuAg' + '%2C' +
-                        'UCnD-frIn-2URPLnDWNN6UsQ' + '%2C' +
-                        'UCs3GloeEzu5rDlQlSLGrr4A' // SparklesProduction
-                    ;
-                    this.dota2ChannelIDs = 'UCAfhB2VCVnjiJ8FhcDYtFAQ' // UCAfhB2VCVnjiJ8FhcDYtFAQ
-                    ;
-                    this.lolChannelIDs = 'UCvqRdlKsE5Q8mf8YXbdIJLw' + '%2C' +
-                        'UCdOWyp25T0HDtjpnV2LpIyw' + '%2C' +
-                        'UCmIGYuRNVWJT7VsEMi4MXfA' // ReplaysLOLHighlights
-                    ;
-                    this.hearthstoneChannelIDs = 'UCsQnAt5I56M-qx4OgCoVmeA' + '%2C' +
-                        'UC-kezFAw46x-9ctBUqVe86Q' + '%2C' +
-                        'UCeBMccz-PDZf6OB4aV6a3eA' // kripparrian
-                    ;
-                    this.starcraftChannelIDs = 'UCZNTsLA6t6bRoj-5QRmqt_w' + '%2C' +
-                        'UCb-Rder8Hs869eVIJIzswBA' + '%2C' +
-                        'UCTcMm4NJYBYXkpOfqXDaEFg' // UCTcMm4NJYBYXkpOfqXDaEFg
-                    ;
-                    // Search on channel playlists
-                    // https://developers.google.com/apis-explorer/#search/youtube/youtube/v3/youtube.playlists.list
-                    // The Youtube API Key, required for accessing data from the API.
-                    this.API_KEY = "&key=AIzaSyCuHiuUWDnn68G5bNCk1VxJm7UWKpbD1FU";
-                    // Search on channel videos, (newest videos) Keyword is the channel ID.
+                    // The channels for each game - identified by the channelIDs
+                    this.channelIDs = {
+                        "CSGO": 'UCayBk2oaTaiUw1Z4r_VKuAg' + '%2C' +
+                            'UCnD-frIn-2URPLnDWNN6UsQ' + '%2C' +
+                            'UCs3GloeEzu5rDlQlSLGrr4A' // SparklesProduction
+                        ,
+                        "DOTA2": 'UCAfhB2VCVnjiJ8FhcDYtFAQ' // UCAfhB2VCVnjiJ8FhcDYtFAQ
+                        ,
+                        "LOL": 'UCvqRdlKsE5Q8mf8YXbdIJLw' + '%2C' +
+                            'UCdOWyp25T0HDtjpnV2LpIyw' + '%2C' +
+                            'UCmIGYuRNVWJT7VsEMi4MXfA' // ReplaysLOLHighlights
+                        ,
+                        "HS": 'UCsQnAt5I56M-qx4OgCoVmeA' + '%2C' +
+                            'UC-kezFAw46x-9ctBUqVe86Q' + '%2C' +
+                            'UCeBMccz-PDZf6OB4aV6a3eA' // kripparrian
+                        ,
+                        "SC2": 'UCZNTsLA6t6bRoj-5QRmqt_w' + '%2C' +
+                            'UCb-Rder8Hs869eVIJIzswBA' + '%2C' +
+                            'UCTcMm4NJYBYXkpOfqXDaEFg' // UCTcMm4NJYBYXkpOfqXDaEFg
+                    };
+                    /*********************
+                     *  getVideos Method
+                     */
+                    // Base of the URL "get request" to the youtube API, Search on channel videos, (newest videos) Keyword is the channel ID.
                     this.VIDEODATA_BASE_URL = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=";
-                    // Specify number and order of videos, and specify information from fields. Here: 5 videos ordered by date, with videoId, title and thumbnails
-                    this.VIDEODATA_FIELDS = "&maxResults=15&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))";
+                    // Extension on the base URL. Specify number and order of videos, and specify information from fields. Here: 5 videos ordered by date, with videoId, title and thumbnails
+                    this.VIDEODATA_FIELDS = "&maxResults=15&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))&type=video&q=";
+                    // Will see if a video is relevant to the 'tag' set in the map, setting more then one tag will filter the search NOT expand it.
+                    this.gameSearchKeys = {
+                        "CSGO": "cs:go",
+                        "DOTA2": "dota2",
+                        "LOL": "league of legends",
+                        "HS": "hearthstone",
+                        "SC2": "starcraft"
+                    };
+                    /*****************************
+                     *  getVideoDurations Method
+                     */
                     // Search on specific videos and get their durations.
                     this.VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails";
                     this.VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
                 }
+                /**
+                 * Fetches the channels relevant to the game chosen from the google API.
+                 * Input: gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'.
+                 * Output: Observable<Channel_Response>.
+                 */
                 YoutubeService.prototype.getChannels = function (gameType) {
-                    var request = "";
-                    switch (gameType) {
-                        case 'CSGO':
-                            request = this.CHANNELDATA_BASE_URL + this.csgoChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
-                            break;
-                        case 'DOTA2':
-                            request = this.CHANNELDATA_BASE_URL + this.dota2ChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
-                            break;
-                        case 'LOL':
-                            request = this.CHANNELDATA_BASE_URL + this.lolChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
-                            break;
-                        case 'HS':
-                            request = this.CHANNELDATA_BASE_URL + this.hearthstoneChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
-                            break;
-                        case 'SC2':
-                            request = this.CHANNELDATA_BASE_URL + this.starcraftChannelIDs + this.CHANNELDATA_FIELDS + this.API_KEY;
-                            break;
-                    }
-                    console.log("Get the channels: " + request);
+                    var request = this.CHANNELDATA_BASE_URL + this.channelIDs[gameType] + this.CHANNELDATA_FIELDS + this.API_KEY;
                     return this._http.get(request)
                         .map(function (res) { return res.json(); });
                 };
-                YoutubeService.prototype.getVideos = function (channelID) {
-                    var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.API_KEY;
+                /**
+                 * Fetches the newest videos relevant to the channel and game chosen.
+                 * Then fetches the durations for those videos.
+                 */
+                YoutubeService.prototype.getVideos = function (channelID, game) {
+                    var _this = this;
+                    var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.gameSearchKeys[game] + this.API_KEY;
                     console.log("Getting latest videos: " + request);
                     return this._http.get(request)
-                        .map(function (res) { return res.json(); });
+                        .map(function (res) { return res.json(); })
+                        .subscribe(function (res) { return _this.getVideoDurations(res); });
                 };
-                YoutubeService.prototype.getVideoDurations = function (videoIDs) {
+                YoutubeService.prototype.getVideoDurations = function (videos) {
+                    var _this = this;
                     var ids = "";
-                    for (var i = 0; i < videoIDs.length; i++) {
-                        ids += videoIDs[i];
-                        if (i < videoIDs.length - 1)
+                    for (var i = 0; i < videos.items.length; i++) {
+                        ids += videos.items[i];
+                        if (i < videos.items.length - 1)
                             ids += "%2C";
                     }
                     var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
-                    return this._http.get(request)
-                        .map(function (res) { return res.json(); });
+                    this._http.get(request)
+                        .map(function (res) { return res.json(); })
+                        .subscribe(function (res) { return _this.mergeArrays(videos, res); });
+                };
+                YoutubeService.prototype.mergeArrays = function (videos, durations) {
+                    return Observable_1.Observable.of({
+                        "items": [
+                            {
+                                "id": {
+                                    "videoId": "QXJ8VYpUvvU"
+                                },
+                                "snippet": {
+                                    "title": "Hearthstone: Trump Never Renounces His Renounce Deck (Warlock Standard)",
+                                    "thumbnails": {
+                                        "medium": {
+                                            "url": "https://i.ytimg.com/vi/QXJ8VYpUvvU/mqdefault.jpg"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "id": {
+                                    "videoId": "3pW0qlzxfPQ"
+                                },
+                                "snippet": {
+                                    "title": "Hearthstone: Trump Cards - 350 - 2 Guys 1 Tyrande Feat. Vlps - Part 1 (Priest Arena)",
+                                    "thumbnails": {
+                                        "medium": {
+                                            "url": "https://i.ytimg.com/vi/3pW0qlzxfPQ/mqdefault.jpg"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "id": {
+                                    "videoId": "-c0aRyF_jZ4"
+                                },
+                                "snippet": {
+                                    "title": "Hearthstone: Tyrande vs Tyrande Showmatch Feat. Vlps",
+                                    "thumbnails": {
+                                        "medium": {
+                                            "url": "https://i.ytimg.com/vi/-c0aRyF_jZ4/mqdefault.jpg"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "id": {
+                                    "videoId": "fGo7g39B5WY"
+                                },
+                                "snippet": {
+                                    "title": "Hearthstone: The Undefeatable Chess Genius? (Tavern Brawl)",
+                                    "thumbnails": {
+                                        "medium": {
+                                            "url": "https://i.ytimg.com/vi/fGo7g39B5WY/mqdefault.jpg"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "id": {
+                                    "videoId": "dWQi0j0v4Ug"
+                                },
+                                "snippet": {
+                                    "title": "Hearthstone: Trump Cards - 349 - The Incredible Deck of a Thousand Draws - Part 2 (Warlock Arena)",
+                                    "thumbnails": {
+                                        "medium": {
+                                            "url": "https://i.ytimg.com/vi/dWQi0j0v4Ug/mqdefault.jpg"
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }).map(function (res) { return res.json(); });
                 };
                 YoutubeService = __decorate([
                     core_1.Injectable(), 

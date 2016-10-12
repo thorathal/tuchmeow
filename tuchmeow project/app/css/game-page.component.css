@@ -1,24 +1,17 @@
-.yt-lockup {
+.lockup {
 	display: block;
 	position: relative;
 	font-size: 11px;
 	color: #767676;
 	line-height: 1.3em;
-	margin: 0;
-	padding: 0;
-	border: 0;
 	background: transparent;
 }
 .video-time {
 	margin-top: 0;
 	margin-right: 0;
 	padding: 0 4px;
-	font-weight: 500;
-	font-size: 11px;
-	background-color: #000;
+	background-color: rgba(10,10,10,.6);
 	color: #fff!important;
-	height: 14px;
-	line-height: 14px;
 	opacity: .75;
 	vertical-align: top;
 	display: inline-block;
@@ -27,15 +20,16 @@
 	bottom: 2px;
 }
 .textwrap {
-	word-wrap: break-word;
-	text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  	overflow: hidden;
 }
 .video-area {
-	background-color: rgba(10,10,10,.3);
-	padding: 0 5px 25px 5px;
+	padding: 0 5px 0px 5px;
 }
 
 .games {
+	padding-right: 30px;
 	width: 20%;
     height: 12%;
 }
@@ -47,6 +41,7 @@
 .videos {
 	width: 20%;
 	height: 15%;
+	padding: 0 20px 25px 0;
 }
 
 .media-object {
@@ -54,12 +49,14 @@
     height: 100%;
 }
 
+h2 {
+	color: #DDDDDD;
+}
+
 ul {
 	display: inline-block;
     vertical-align:top;
-    padding-right: 10px;
-    padding: 3px 5px;
-    padding-bottom: 15px;
+    padding: 3px 10px 15px 0;
 }
 li, div, a, span{
 	margin: 0;
