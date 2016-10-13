@@ -99,8 +99,6 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                         .map(function (res) { return res.json(); });
                 };
                 YoutubeService.prototype.getVideoDurations = function (videos) {
-                    var _this = this;
-                    console.log("VideoDurations - Started");
                     var ids = "";
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
                         ids += videos[i].id.videoId;
@@ -109,13 +107,14 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                     }
                     var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
                     var tmp = null;
-                    this._http.get(request)
-                        .map(function (res) { return res.json(); })
-                        .subscribe(function (res) { tmp = _this.mergeArrays(videos, res); });
-                    return tmp;
+                    return this._http.get(request)
+                        .map(function (res) { return res.json(); });
                 };
+                /**
+                 * 	Merging the two video responses from the youtube API so its easier to work with,
+                 * 	and converting the video duration format into an easier to understand format.
+                 */
                 YoutubeService.prototype.mergeArrays = function (videos, durations) {
-                    console.log("MergeArray - Started");
                     var videoDetails;
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
                         var tmpDur = durations.items[i].contentDetails.duration;
@@ -139,12 +138,6 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                                 "duration": tmpDur
                             });
                         }
-                    }
-                    for (var f = 0; f < this.VIDEO_NUM; f++) {
-                        console.log(f + ": id = " + videoDetails[f].id +
-                            ", title = " + videoDetails[f].title +
-                            ", thumbnailUrl = " + videoDetails[f].thumbnailUrl +
-                            ", duration = " + videoDetails[f].duration);
                     }
                     return videoDetails;
                 };
