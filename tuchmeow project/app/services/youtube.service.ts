@@ -5,9 +5,10 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
-import {Channel_Response} from '../interfaces/channel_response';
+import {Channel_Snippet} from '../interfaces/channel_snippet';
+import {Video_Snippet} from '../interfaces/video_snippet';
+import {Video_ContentDetails} from '../interfaces/video_contentDetails';
 import {Video_Data} from '../interfaces/video_data';
-import {Video_Durations} from '../interfaces/video_durations';
 
 @Injectable()
 export class YoutubeService {
@@ -64,7 +65,7 @@ export class YoutubeService {
      * Input: gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'.
      * Output: Observable<Channel_Response>.
      */
-    getChannels(gameType: string) : Observable<Channel_Response> {
+    getChannels(gameType: string) : Observable<Channel_Snippet> {
         var request = this.CHANNELDATA_BASE_URL + this.channelIDs[gameType] + this.CHANNELDATA_FIELDS + this.API_KEY;
         return this._http.get(request)
                 .map(res => res.json());
@@ -79,8 +80,10 @@ export class YoutubeService {
     
     // Base of the URL "get request" to the youtube API, Search on channel videos, (newest videos) Keyword is the channel ID.
     private VIDEODATA_BASE_URL = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=";
+ // The number of videos that will be fetched
+    private VIDEO_NUM = 15;
     // Extension on the base URL. Specify number and order of videos, and specify information from fields. Here: 5 videos ordered by date, with videoId, title and thumbnails
-    private VIDEODATA_FIELDS = "&maxResults=15&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))&type=video&q=";
+    private VIDEODATA_FIELDS = "&maxResults="+this.VIDEO_NUM+"&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))&type=video&q=";
     
     // Will see if a video is relevant to the 'tag' set in the map, setting more then one tag will filter the search NOT expand it.
     private gameSearchKeys: { [id: string]: string } = {
@@ -95,112 +98,79 @@ export class YoutubeService {
      * Fetches the newest videos relevant to the channel and game chosen.
      * Then fetches the durations for those videos.
      */
-    getVideos(channelID : string, game : string) {
+    getVideos(channelID : string, game : string) : Observable<Video_Snippet> {
         var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.gameSearchKeys[game] + this.API_KEY;
         console.log("Getting latest videos: " + request);
         return this._http.get(request)
-                .map(res => res.json())
-                .subscribe(
-                        res => { return this.getVideoDurations(res); }
-                    );  
+                .map(res => res.json());
     }
-    
-    
-    
-    
-    /*****************************
-     *  getVideoDurations Method
-     */
+
     
     // Search on specific videos and get their durations.
-    private VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails";
+    private VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=";
     private VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
     
-    getVideoDurations(videos) {
+    getVideoDurations(videos) : Video_Data[] {
+        console.log("VideoDurations - Started");
+               
         var ids = "";
-        for(let i=0; i < videos.items.length; i++) {
-            ids += videos.items[i];
-            if(i < videos.items.length-1) 
+        for(let i=0; i < this.VIDEO_NUM; i++) {
+            ids += videos[i].id.videoId;
+            if(i < videos.length-1) 
                 ids += "%2C";
         }
         var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
+        var tmp = null;
         this._http.get(request)
                 .map(res => res.json())
                 .subscribe(
-                        res => { return this.mergeArrays(videos, res); }
+                        res => { tmp = this.mergeArrays(videos, res); }
                     );
+        
+      
+        
+        return tmp;
     }
     
-    mergeArrays(videos : Video_Data, durations : Video_Durations) {
+    mergeArrays(videos, durations : Video_ContentDetails) : Video_Data[] {
+        console.log("MergeArray - Started");
+    
+        var videoDetails : any[];
+        for (var i = 0; i < this.VIDEO_NUM; i++) {
+            
+            var tmpDur = durations.items[i].contentDetails.duration;
+            tmpDur = tmpDur.replace("PT", "");
+            tmpDur = tmpDur.replace("H", ":");
+            tmpDur = tmpDur.replace("M", ":");
+            tmpDur = tmpDur.replace("S", "");
+            
+            if(i == 0) {
+                videoDetails = [{
+                    "id" : videos[i].id.videoId,
+                    "title": videos[i].snippet.title,
+                    "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                    "duration": tmpDur
+                }]
+            }
+            else {
+                
+                videoDetails.push({
+                    "id" : videos[i].id.videoId,
+                    "title": videos[i].snippet.title,
+                    "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                    "duration": tmpDur
+            });
+            }
+        }
+         
+        for(var f = 0; f < this.VIDEO_NUM; f++) {               
+            console.log(f+": id = " + videoDetails[f].id + 
+                        ", title = " + videoDetails[f].title + 
+                        ", thumbnailUrl = " + videoDetails[f].thumbnailUrl + 
+                        ", duration = " + videoDetails[f].duration);
+        }
         
-        return Observable.of({
-            "items": [
-                      {
-                       "id": {
-                        "videoId": "QXJ8VYpUvvU"
-                       },
-                       "snippet": {
-                        "title": "Hearthstone: Trump Never Renounces His Renounce Deck (Warlock Standard)",
-                        "thumbnails": {
-                         "medium": {
-                          "url": "https://i.ytimg.com/vi/QXJ8VYpUvvU/mqdefault.jpg"
-                         }
-                        }
-                       }
-                      },
-                      {
-                       "id": {
-                        "videoId": "3pW0qlzxfPQ"
-                       },
-                       "snippet": {
-                        "title": "Hearthstone: Trump Cards - 350 - 2 Guys 1 Tyrande Feat. Vlps - Part 1 (Priest Arena)",
-                        "thumbnails": {
-                         "medium": {
-                          "url": "https://i.ytimg.com/vi/3pW0qlzxfPQ/mqdefault.jpg"
-                         }
-                        }
-                       }
-                      },
-                      {
-                       "id": {
-                        "videoId": "-c0aRyF_jZ4"
-                       },
-                       "snippet": {
-                        "title": "Hearthstone: Tyrande vs Tyrande Showmatch Feat. Vlps",
-                        "thumbnails": {
-                         "medium": {
-                          "url": "https://i.ytimg.com/vi/-c0aRyF_jZ4/mqdefault.jpg"
-                         }
-                        }
-                       }
-                      },
-                      {
-                       "id": {
-                        "videoId": "fGo7g39B5WY"
-                       },
-                       "snippet": {
-                        "title": "Hearthstone: The Undefeatable Chess Genius? (Tavern Brawl)",
-                        "thumbnails": {
-                         "medium": {
-                          "url": "https://i.ytimg.com/vi/fGo7g39B5WY/mqdefault.jpg"
-                         }
-                        }
-                       }
-                      },
-                      {
-                       "id": {
-                        "videoId": "dWQi0j0v4Ug"
-                       },
-                       "snippet": {
-                        "title": "Hearthstone: Trump Cards - 349 - The Incredible Deck of a Thousand Draws - Part 2 (Warlock Arena)",
-                        "thumbnails": {
-                         "medium": {
-                          "url": "https://i.ytimg.com/vi/dWQi0j0v4Ug/mqdefault.jpg"
-                         }
-                        }
-                       }
-                      }
-                     ]
-                    }).map(res => res.json());
+        return videoDetails;
     }
+    
 }

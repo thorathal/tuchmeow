@@ -7,4 +7,4 @@ System.register([], function(exports_1, context_1) {
         }
     }
 });
-//# sourceMappingURL=video_durations.js.map
+//# sourceMappingURL=channel_snippet.js.map

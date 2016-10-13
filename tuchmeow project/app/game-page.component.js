@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Observable', 'rxjs/add/observable/forkJoin', './services/youtube.service', './services/game.service'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Observable', 'rxjs/add/observable/forkJoin', 'rxjs/add/operator/delay', './services/youtube.service', './services/game.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -27,6 +27,7 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Obse
                 Observable_1 = Observable_1_1;
             },
             function (_1) {},
+            function (_2) {},
             function (youtube_service_1_1) {
                 youtube_service_1 = youtube_service_1_1;
             },
@@ -58,9 +59,10 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', 'rxjs/Obse
                         Observable_1.Observable.forkJoin([
                             this._youtubeService.getChannels(this.currentGame),
                             this._youtubeService.getVideos(this.currentChannel, this.currentGame)
-                        ]).subscribe(function (res) {
+                        ])
+                            .subscribe(function (res) {
                             _this.channels = res[0].items;
-                            _this.videos = res[1].items;
+                            _this.videos = _this._youtubeService.getVideoDurations(res[1].items);
                         }, function (err) {
                             _this.isLoading = false;
                             console.log(err);

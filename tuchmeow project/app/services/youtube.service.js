@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/operator/map', 'rxjs/add/operator/mergeMap'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxjs/add/operator/mergeMap'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, http_1, Observable_1;
+    var core_1, http_1;
     var YoutubeService;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
             },
             function (http_1_1) {
                 http_1 = http_1_1;
-            },
-            function (Observable_1_1) {
-                Observable_1 = Observable_1_1;
             },
             function (_1) {},
             function (_2) {}],
@@ -65,8 +62,10 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                      */
                     // Base of the URL "get request" to the youtube API, Search on channel videos, (newest videos) Keyword is the channel ID.
                     this.VIDEODATA_BASE_URL = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=";
+                    // The number of videos that will be fetched
+                    this.VIDEO_NUM = 15;
                     // Extension on the base URL. Specify number and order of videos, and specify information from fields. Here: 5 videos ordered by date, with videoId, title and thumbnails
-                    this.VIDEODATA_FIELDS = "&maxResults=15&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))&type=video&q=";
+                    this.VIDEODATA_FIELDS = "&maxResults=" + this.VIDEO_NUM + "&order=date&fields=items(id(videoId)%2Csnippet(title%2Cthumbnails(medium(url))))&type=video&q=";
                     // Will see if a video is relevant to the 'tag' set in the map, setting more then one tag will filter the search NOT expand it.
                     this.gameSearchKeys = {
                         "CSGO": "cs:go",
@@ -75,11 +74,8 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                         "HS": "hearthstone",
                         "SC2": "starcraft"
                     };
-                    /*****************************
-                     *  getVideoDurations Method
-                     */
                     // Search on specific videos and get their durations.
-                    this.VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails";
+                    this.VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=";
                     this.VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
                 }
                 /**
@@ -97,96 +93,60 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/Observable', 'rxjs/add/
                  * Then fetches the durations for those videos.
                  */
                 YoutubeService.prototype.getVideos = function (channelID, game) {
-                    var _this = this;
                     var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.gameSearchKeys[game] + this.API_KEY;
                     console.log("Getting latest videos: " + request);
                     return this._http.get(request)
-                        .map(function (res) { return res.json(); })
-                        .subscribe(function (res) { return _this.getVideoDurations(res); });
+                        .map(function (res) { return res.json(); });
                 };
                 YoutubeService.prototype.getVideoDurations = function (videos) {
                     var _this = this;
+                    console.log("VideoDurations - Started");
                     var ids = "";
-                    for (var i = 0; i < videos.items.length; i++) {
-                        ids += videos.items[i];
-                        if (i < videos.items.length - 1)
+                    for (var i = 0; i < this.VIDEO_NUM; i++) {
+                        ids += videos[i].id.videoId;
+                        if (i < videos.length - 1)
                             ids += "%2C";
                     }
                     var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
+                    var tmp = null;
                     this._http.get(request)
                         .map(function (res) { return res.json(); })
-                        .subscribe(function (res) { return _this.mergeArrays(videos, res); });
+                        .subscribe(function (res) { tmp = _this.mergeArrays(videos, res); });
+                    return tmp;
                 };
                 YoutubeService.prototype.mergeArrays = function (videos, durations) {
-                    return Observable_1.Observable.of({
-                        "items": [
-                            {
-                                "id": {
-                                    "videoId": "QXJ8VYpUvvU"
-                                },
-                                "snippet": {
-                                    "title": "Hearthstone: Trump Never Renounces His Renounce Deck (Warlock Standard)",
-                                    "thumbnails": {
-                                        "medium": {
-                                            "url": "https://i.ytimg.com/vi/QXJ8VYpUvvU/mqdefault.jpg"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "id": {
-                                    "videoId": "3pW0qlzxfPQ"
-                                },
-                                "snippet": {
-                                    "title": "Hearthstone: Trump Cards - 350 - 2 Guys 1 Tyrande Feat. Vlps - Part 1 (Priest Arena)",
-                                    "thumbnails": {
-                                        "medium": {
-                                            "url": "https://i.ytimg.com/vi/3pW0qlzxfPQ/mqdefault.jpg"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "id": {
-                                    "videoId": "-c0aRyF_jZ4"
-                                },
-                                "snippet": {
-                                    "title": "Hearthstone: Tyrande vs Tyrande Showmatch Feat. Vlps",
-                                    "thumbnails": {
-                                        "medium": {
-                                            "url": "https://i.ytimg.com/vi/-c0aRyF_jZ4/mqdefault.jpg"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "id": {
-                                    "videoId": "fGo7g39B5WY"
-                                },
-                                "snippet": {
-                                    "title": "Hearthstone: The Undefeatable Chess Genius? (Tavern Brawl)",
-                                    "thumbnails": {
-                                        "medium": {
-                                            "url": "https://i.ytimg.com/vi/fGo7g39B5WY/mqdefault.jpg"
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "id": {
-                                    "videoId": "dWQi0j0v4Ug"
-                                },
-                                "snippet": {
-                                    "title": "Hearthstone: Trump Cards - 349 - The Incredible Deck of a Thousand Draws - Part 2 (Warlock Arena)",
-                                    "thumbnails": {
-                                        "medium": {
-                                            "url": "https://i.ytimg.com/vi/dWQi0j0v4Ug/mqdefault.jpg"
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    }).map(function (res) { return res.json(); });
+                    console.log("MergeArray - Started");
+                    var videoDetails;
+                    for (var i = 0; i < this.VIDEO_NUM; i++) {
+                        var tmpDur = durations.items[i].contentDetails.duration;
+                        tmpDur = tmpDur.replace("PT", "");
+                        tmpDur = tmpDur.replace("H", ":");
+                        tmpDur = tmpDur.replace("M", ":");
+                        tmpDur = tmpDur.replace("S", "");
+                        if (i == 0) {
+                            videoDetails = [{
+                                    "id": videos[i].id.videoId,
+                                    "title": videos[i].snippet.title,
+                                    "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                                    "duration": tmpDur
+                                }];
+                        }
+                        else {
+                            videoDetails.push({
+                                "id": videos[i].id.videoId,
+                                "title": videos[i].snippet.title,
+                                "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                                "duration": tmpDur
+                            });
+                        }
+                    }
+                    for (var f = 0; f < this.VIDEO_NUM; f++) {
+                        console.log(f + ": id = " + videoDetails[f].id +
+                            ", title = " + videoDetails[f].title +
+                            ", thumbnailUrl = " + videoDetails[f].thumbnailUrl +
+                            ", duration = " + videoDetails[f].duration);
+                    }
+                    return videoDetails;
                 };
                 YoutubeService = __decorate([
                     core_1.Injectable(), 

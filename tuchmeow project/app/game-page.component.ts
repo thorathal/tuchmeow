@@ -2,10 +2,12 @@ import {Component, OnInit} from 'angular2/core';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/forkJoin'
+import 'rxjs/add/observable/forkJoin';
+import 'rxjs/add/operator/delay';
 
 import {YoutubeService} from './services/youtube.service';
 import {Game} from './interfaces/game';
+import {Video_Data} from './interfaces/video_data';
 import {GameService} from './services/game.service';
 
 @Component({
@@ -76,7 +78,7 @@ export class GamePageComponent implements OnInit{
     channelSelected = false;
     games: Game[];
     channels: any[];
-    videos: any[];
+    videos: Video_Data[];
     currentGame: string;
     currentChannel: string;
 
@@ -86,7 +88,7 @@ export class GamePageComponent implements OnInit{
     }    
 
     ngOnInit() {
-        
+ 
         // get data on games
         this.games = this._gameService.getItems();
         this.isLoading = false;
@@ -101,18 +103,19 @@ export class GamePageComponent implements OnInit{
             Observable.forkJoin([
                         this._youtubeService.getChannels(this.currentGame),
                         this._youtubeService.getVideos(this.currentChannel, this.currentGame)           
-                    ]).subscribe(
+                    ])
+                    .subscribe(
                         res => {
                             this.channels = res[0].items;
-                            this.videos = res[1].items;
+                            this.videos = this._youtubeService.getVideoDurations(res[1].items);
                         },
                         err => { 
                             this.isLoading = false;
                             console.log(err);
                         },
                         () => { 
-                            this.isLoading = false; 
-                        } 
+                            this.isLoading = false
+                        }
                     );                                
                         
                         

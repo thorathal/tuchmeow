@@ -1,4 +1,4 @@
-export interface Channel_Response{
+export interface Channel_Snippet{
     items: [{
         id: string;
         snippet: {
