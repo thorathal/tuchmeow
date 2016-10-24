@@ -11,10 +11,10 @@ import {Video_Data} from './interfaces/video_data';
 import {GameService} from './services/game.service';
 
 @Component({
-    template: `
+    template: ` 
         <div *ngIf="isLoading">
             <i class="fa fa-spinner fa-spin fa-3x"></i>
-        </div>    
+        </div>
         <ul class="games" *ngFor="#game of games">
             <li [routerLink]="['Game', { game: game.id }]">
                 <a title="{{ game.name }}">
@@ -22,30 +22,24 @@ import {GameService} from './services/game.service';
                 </a>
             </li>
         </ul>
-        
-        
-        <!-- Will be moved to its own component: channel.component -->
+          <!-- Will be moved to its own component: channel.component -->
         <div *ngIf="gameSelected">
-            
-            <ul class="channels" *ngFor="#channel of channels">
+             <ul class="channels" *ngFor="#channel of channels">
                 <li class="lockup">
                     <a title="{{ channel.snippet.description }}" [routerLink]="['Channel', { game: currentGame, channelid: channel.id }]">
                         <img class="media-object" src="{{ channel.snippet.thumbnails.medium.url }}">
-                        <span class="video-time" aria-hidden="true"> 
+                        <span class="video-time" aria-hidden="true">                             
                             {{ channel.snippet.title }}
                         </span>
                     </a>
                 </li>
             </ul>
-            
-        </div>
+         </div>
         <br/>
-        
-        <!-- Will be moved to its own component: videos.component -->
+         <!-- Will be moved to its own component: videos.component -->
         <div class="video-area" *ngIf="channelSelected">
             <h2>Videos</h2>
-            
-            <ul class="videos" *ngFor="#video of videos">
+             <ul class="videos" *ngFor="#video of videos">
                 <li>
                     <div class="lockup">
                         <a area-hidden="true" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id }]">   
@@ -53,12 +47,12 @@ import {GameService} from './services/game.service';
                             <span class="video-time" aria-hidden="true"> 
                                 {{ video.duration }}
                             </span>
-                        </a>    
+                        </a>                     
                     </div>
                     <div class="textwrap">
-                            <a title="{{ video.title }}" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id }]">
-                                    <b>{{ video.title }}</b>
-                            </a>
+                        <a title="{{ video.title }}" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id }]">
+                            <b>{{ video.title }}</b>
+                        </a>
                     </div>
                 </li>
             </ul>
@@ -71,16 +65,16 @@ import {GameService} from './services/game.service';
             <iframe width="80%" height="62%" src="https://www.youtube.com/embed/{{ currentVideo }}" frameborder="0" allowfullscreen>
             </iframe>
            
-        </div> 
+        </div>
+
         <br/>
         <br/>
-            
-         `,
-    styleUrls:['app/css/game-page.component.css'],
+          `,
+    styleUrls: ['app/css/game-page.component.css'],
     providers: [GameService, YoutubeService, HTTP_PROVIDERS],
-    directives: [ROUTER_DIRECTIVES]
+        directives: [ROUTER_DIRECTIVES]
 })
-export class GamePageComponent implements OnInit{
+export class GamePageComponent implements OnInit {
     isLoading = true;
     gameSelected = false;
     channelSelected = false;
@@ -93,21 +87,20 @@ export class GamePageComponent implements OnInit{
     currentVideo: string;
 
     constructor(private _gameService : GameService,
-                private _youtubeService: YoutubeService, 
-                private _routeParams: RouteParams) {
-    }    
-
+                private _youtubeService : YoutubeService, 
+                private _routeParams : RouteParams) {
+    }
+    
     ngOnInit() {
- 
         // get data on games
         this.games = this._gameService.getItems();
         this.isLoading = false;
-        
-        
         this.currentGame = this._routeParams.get('game');
         this.currentChannel = this._routeParams.get('channelid');
         this.currentVideo = this._routeParams.get('videoid');
-        if(this.currentVideo) { // if a game, a channel and a video has been selected
+        
+        // if a game, a channel and a video has been selected: We load the video player.
+        if(this.currentVideo) { 
             this._youtubeService.getChannels(this.currentGame)
             .subscribe(
                 res => this.channels = res.items,
@@ -133,16 +126,16 @@ export class GamePageComponent implements OnInit{
                         forkres => {
                             this.channels = forkres[0].items;
                             this._youtubeService.getVideoDurations(forkres[1])
-                                    .subscribe(
-                                            res => {
-                                                this.videos = this._youtubeService.mergeArrays(forkres[1], res);
-                                            },
-                                            null,
-                                            () => {
-                                                this.isLoading = false;
-                                                this.channelSelected = true;
-                                            }
-                                    );
+                                .subscribe(
+                                    res => {
+                                        this.videos = this._youtubeService.mergeArrays(forkres[1], res);
+                                    },
+                                    null,
+                                    () => {
+                                        this.isLoading = false;
+                                        this.channelSelected = true;
+                                    }
+                                );
                         }
                     );                                
                         
@@ -167,3 +160,4 @@ export class GamePageComponent implements OnInit{
         
     }
 }
+
