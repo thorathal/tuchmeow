@@ -48,22 +48,30 @@ import {GameService} from './services/game.service';
             <ul class="videos" *ngFor="#video of videos">
                 <li>
                     <div class="lockup">
-                        <a area-hidden="true" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]">   
-                            <img class="media-object" src="{{ video.snippet.thumbnails.medium.url }}">
+                        <a area-hidden="true" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id }]">   
+                            <img class="media-object" src="{{ video.thumbnailUrl }}">
                             <span class="video-time" aria-hidden="true"> 
-                                {{ video.id.videoId }}
+                                {{ video.duration }}
                             </span>
                         </a>    
                     </div>
                     <div class="textwrap">
-                            <a title="{{ video.snippet.title }}" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id.videoId }]">
-                                    <b>{{ video.snippet.title }}</b>
+                            <a title="{{ video.title }}" [routerLink]="['Video', { game: currentGame, channelid: currentChannel, videoid: video.id }]">
+                                    <b>{{ video.title }}</b>
                             </a>
                     </div>
                 </li>
             </ul>
-           
         </div>
+        
+        
+        <!-- Will be moved to its own component: player.component -->
+        <div style="text-align: center" *ngIf="videoSelected">
+            
+            <iframe width="80%" height="62%" src="https://www.youtube.com/embed/{{ currentVideo }}" frameborder="0" allowfullscreen>
+            </iframe>
+           
+        </div> 
         <br/>
         <br/>
             
@@ -76,11 +84,13 @@ export class GamePageComponent implements OnInit{
     isLoading = true;
     gameSelected = false;
     channelSelected = false;
+    videoSelected = false;
     games: Game[];
     channels: any[];
     videos: Video_Data[];
     currentGame: string;
     currentChannel: string;
+    currentVideo: string;
 
     constructor(private _gameService : GameService,
                 private _youtubeService: YoutubeService, 
@@ -93,28 +103,46 @@ export class GamePageComponent implements OnInit{
         this.games = this._gameService.getItems();
         this.isLoading = false;
         
-        // If channel and game has been chosen.Get video data from the channel. Will be moved to video.component
+        
         this.currentGame = this._routeParams.get('game');
         this.currentChannel = this._routeParams.get('channelid');
-        if(this.currentChannel) {
+        this.currentVideo = this._routeParams.get('videoid');
+        if(this.currentVideo) { // if a game, a channel and a video has been selected
+            this._youtubeService.getChannels(this.currentGame)
+            .subscribe(
+                res => this.channels = res.items,
+                err => {
+                    console.error(err);
+                    this.isLoading = false;
+                },
+                () => {
+                    this.isLoading = false;
+                    this.gameSelected = true;
+                }
+            );
+            this.videoSelected = true;
+        }
+        else if(this.currentChannel) { // if a game and a channel has been selected
             this.isLoading = true;
             this.gameSelected = true;
-            this.channelSelected = true;
             Observable.forkJoin([
                         this._youtubeService.getChannels(this.currentGame),
                         this._youtubeService.getVideos(this.currentChannel, this.currentGame)           
                     ])
                     .subscribe(
-                        res => {
-                            this.channels = res[0].items;
-                            this.videos = this._youtubeService.getVideoDurations(res[1].items);
-                        },
-                        err => { 
-                            this.isLoading = false;
-                            console.log(err);
-                        },
-                        () => { 
-                            this.isLoading = false
+                        forkres => {
+                            this.channels = forkres[0].items;
+                            this._youtubeService.getVideoDurations(forkres[1])
+                                    .subscribe(
+                                            res => {
+                                                this.videos = this._youtubeService.mergeArrays(forkres[1], res);
+                                            },
+                                            null,
+                                            () => {
+                                                this.isLoading = false;
+                                                this.channelSelected = true;
+                                            }
+                                    );
                         }
                     );                                
                         
@@ -123,7 +151,6 @@ export class GamePageComponent implements OnInit{
         // If only a game has been chosen. Get data 'our' list of channels on the game. Will be moved to channel.component
         if(this.currentGame) {
             this.isLoading = true;
-            this.gameSelected = true;
             this._youtubeService.getChannels(this.currentGame)
                     .subscribe(
                         res => this.channels = res.items,
@@ -131,7 +158,11 @@ export class GamePageComponent implements OnInit{
                             console.error(err);
                             this.isLoading = false;
                         },
-                        () => this.isLoading = false );
+                        () => {
+                            this.isLoading = false;
+                            this.gameSelected = true;
+                        }
+                    );
         }
         
     }

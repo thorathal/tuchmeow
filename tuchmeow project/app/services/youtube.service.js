@@ -99,20 +99,17 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                         .map(function (res) { return res.json(); });
                 };
                 YoutubeService.prototype.getVideoDurations = function (videos) {
-                    var _this = this;
                     console.log("VideoDurations - Started");
                     var ids = "";
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
-                        ids += videos[i].id.videoId;
-                        if (i < videos.length - 1)
+                        ids += videos.items[i].id.videoId;
+                        if (i < videos.items.length - 1)
                             ids += "%2C";
                     }
                     var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
                     var tmp = null;
-                    this._http.get(request)
-                        .map(function (res) { return res.json(); })
-                        .subscribe(function (res) { tmp = _this.mergeArrays(videos, res); });
-                    return tmp;
+                    return this._http.get(request)
+                        .map(function (res) { return res.json(); });
                 };
                 YoutubeService.prototype.mergeArrays = function (videos, durations) {
                     console.log("MergeArray - Started");
@@ -125,26 +122,20 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                         tmpDur = tmpDur.replace("S", "");
                         if (i == 0) {
                             videoDetails = [{
-                                    "id": videos[i].id.videoId,
-                                    "title": videos[i].snippet.title,
-                                    "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                                    "id": videos.items[i].id.videoId,
+                                    "title": videos.items[i].snippet.title,
+                                    "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
                                     "duration": tmpDur
                                 }];
                         }
                         else {
                             videoDetails.push({
-                                "id": videos[i].id.videoId,
-                                "title": videos[i].snippet.title,
-                                "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                                "id": videos.items[i].id.videoId,
+                                "title": videos.items[i].snippet.title,
+                                "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
                                 "duration": tmpDur
                             });
                         }
-                    }
-                    for (var f = 0; f < this.VIDEO_NUM; f++) {
-                        console.log(f + ": id = " + videoDetails[f].id +
-                            ", title = " + videoDetails[f].title +
-                            ", thumbnailUrl = " + videoDetails[f].thumbnailUrl +
-                            ", duration = " + videoDetails[f].duration);
                     }
                     return videoDetails;
                 };

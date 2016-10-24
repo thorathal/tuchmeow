@@ -110,29 +110,22 @@ export class YoutubeService {
     private VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=";
     private VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
     
-    getVideoDurations(videos) : Video_Data[] {
+    getVideoDurations(videos : Video_Snippet) : Observable<Video_ContentDetails> {
         console.log("VideoDurations - Started");
                
         var ids = "";
         for(let i=0; i < this.VIDEO_NUM; i++) {
-            ids += videos[i].id.videoId;
-            if(i < videos.length-1) 
+            ids += videos.items[i].id.videoId;
+            if(i < videos.items.length-1) 
                 ids += "%2C";
         }
         var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
         var tmp = null;
-        this._http.get(request)
-                .map(res => res.json())
-                .subscribe(
-                        res => { tmp = this.mergeArrays(videos, res); }
-                    );
-        
-      
-        
-        return tmp;
+        return this._http.get(request)
+                    .map(res => res.json());
     }
     
-    mergeArrays(videos, durations : Video_ContentDetails) : Video_Data[] {
+    mergeArrays(videos : Video_Snippet, durations : Video_ContentDetails) : Video_Data[] {
         console.log("MergeArray - Started");
     
         var videoDetails : any[];
@@ -146,28 +139,21 @@ export class YoutubeService {
             
             if(i == 0) {
                 videoDetails = [{
-                    "id" : videos[i].id.videoId,
-                    "title": videos[i].snippet.title,
-                    "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                    "id" : videos.items[i].id.videoId,
+                    "title": videos.items[i].snippet.title,
+                    "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
                     "duration": tmpDur
                 }]
             }
             else {
                 
                 videoDetails.push({
-                    "id" : videos[i].id.videoId,
-                    "title": videos[i].snippet.title,
-                    "thumbnailUrl": videos[i].snippet.thumbnails.medium.url,
+                    "id" : videos.items[i].id.videoId,
+                    "title": videos.items[i].snippet.title,
+                    "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
                     "duration": tmpDur
             });
             }
-        }
-         
-        for(var f = 0; f < this.VIDEO_NUM; f++) {               
-            console.log(f+": id = " + videoDetails[f].id + 
-                        ", title = " + videoDetails[f].title + 
-                        ", thumbnailUrl = " + videoDetails[f].thumbnailUrl + 
-                        ", duration = " + videoDetails[f].duration);
         }
         
         return videoDetails;
