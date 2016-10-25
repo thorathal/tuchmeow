@@ -24,14 +24,11 @@ System.register(['angular2/core', 'angular2/router'], function(exports_1, contex
             PlayerComponent = (function () {
                 function PlayerComponent(_routeParams) {
                     this._routeParams = _routeParams;
-                    this.isLoading = true;
                 }
-                PlayerComponent.prototype.ngOnInit = function () {
-                };
                 PlayerComponent = __decorate([
                     core_1.Component({
-                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n        <div class=\"space\"></div>\n        <iframe width=\"99.5%\" height=\"65%\" src=\"https://www.youtube.com/embed/<insert-youtube-video-id-here>\" frameborder=\"0\" allowfullscreen></iframe>\n    ",
-                        styles: ["\n        .space {\n            height: 8%;\n        }\n    "]
+                        selector: 'player',
+                        template: "\n        <div style=\"text-align: center\">\n\n            <iframe width=\"80%\" height=\"62%\" src=\"https://www.youtube.com/embed/{{ _routeParams.get('videoid') }}\" frameborder=\"0\" allowfullscreen>\n            </iframe>\n\n        </div>\n    "
                     }), 
                     __metadata('design:paramtypes', [router_1.RouteParams])
                 ], PlayerComponent);

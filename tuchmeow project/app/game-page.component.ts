@@ -22,8 +22,10 @@ import {GameService} from './services/game.service';
                 </a>
             </li>
         </ul>
-          <!-- Will be moved to its own component: channel.component -->
-        <div *ngIf="gameSelected">
+        
+        
+        <!-- Will be moved to its own component: channel.component -->
+        <div *ngIf="_routeParams.get('game')">
              <ul class="channels" *ngFor="#channel of channels">
                 <li class="lockup">
                     <a title="{{ channel.snippet.description }}" [routerLink]="['Channel', { game: currentGame, channelid: channel.id }]">
@@ -34,9 +36,11 @@ import {GameService} from './services/game.service';
                     </a>
                 </li>
             </ul>
-         </div>
+        </div>
         <br/>
-         <!-- Will be moved to its own component: videos.component -->
+        
+        
+        <!-- Will be moved to its own component: videos.component -->
         <div class="video-area" *ngIf="channelSelected">
             <h2>Videos</h2>
              <ul class="videos" *ngFor="#video of videos">

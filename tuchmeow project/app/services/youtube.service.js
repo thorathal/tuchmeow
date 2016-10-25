@@ -99,10 +99,6 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                         .map(function (res) { return res.json(); });
                 };
                 YoutubeService.prototype.getVideoDurations = function (videos) {
-<<<<<<< HEAD
-                    console.log("VideoDurations - Started");
-=======
->>>>>>> branch 'master' of https://github.com/thorathal/tuchmeow.git
                     var ids = "";
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
                         ids += videos.items[i].id.videoId;
@@ -110,14 +106,8 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                             ids += "%2C";
                     }
                     var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
-                    var tmp = null;
-                    return this._http.get(request)
-                        .map(function (res) { return res.json(); });
+                    return this._http.get(request).map(function (res) { return res.json(); });
                 };
-                /**
-                 * 	Merging the two video responses from the youtube API so its easier to work with,
-                 * 	and converting the video duration format into an easier to understand format.
-                 */
                 YoutubeService.prototype.mergeArrays = function (videos, durations) {
                     var videoDetails;
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
