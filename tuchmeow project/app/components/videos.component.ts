@@ -3,9 +3,10 @@ import {HTTP_PROVIDERS} from 'angular2/http';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {Observable} from 'rxjs/Observable';
 
+import {VideoData} from '../interfaces/video_data';
 import {YoutubeService} from '../services/youtube.service';
 
-@Component({ // [routerLink]="['Game', { id: data.url }]"
+@Component({
     selector: 'videos',
     template: `
         <div class="video-area">
@@ -35,7 +36,7 @@ import {YoutubeService} from '../services/youtube.service';
 })
 export class VideosComponent implements OnInit {
     isLoading = true;
-    videos: any[];
+    videos: VideoData[];
 
     constructor(private _youtubeService: YoutubeService,
         private _routeParams: RouteParams) {

@@ -36,10 +36,7 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', '../servic
                 ChannelsComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this._youtubeService.getChannels(this._routeParams.get('game'))
-                        .subscribe(function (res) { return _this.channels = res.items; }, function (err) {
-                        console.error(err);
-                        _this.isLoading = false;
-                    }, function () { return _this.isLoading = false; });
+                        .subscribe(function (res) { return _this.channels = res.items; }, function (err) { return console.error(err); }, function () { return _this.isLoading = false; });
                 };
                 ChannelsComponent = __decorate([
                     core_1.Component({

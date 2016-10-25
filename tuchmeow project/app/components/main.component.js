@@ -40,7 +40,8 @@ System.register(['angular2/core', 'angular2/router', './games.component', './cha
                 MainComponent = __decorate([
                     core_1.Component({
                         selector: 'main',
-                        template: "\n\t\t<games></games>\n\n\t\t<div *ngIf=\"_routeParams.get('game')\">\n\t\t\t<channels></channels>\n\t\t</div>\n\n\t\t<div *ngIf=\"_routeParams.get('channelid') && !_routeParams.get('videoid')\">\n\t\t\t<videos></videos>\n\t\t</div>\n\n\t\t<div *ngIf=\"_routeParams.get('videoid')\">\n\t\t\t<player></player>\n\t\t</div>\n    ",
+                        template: "\n        <div class=\"body\">\n    \t\t<games></games>\n    \n    \t\t<div *ngIf=\"_routeParams.get('game')\">\n    \t\t\t<channels></channels>\n    \t\t</div>\n    \n    \t\t<div *ngIf=\"_routeParams.get('channelid') && !_routeParams.get('videoid')\">\n    \t\t\t<videos></videos>\n    \t\t</div>\n    \n    \t\t<div *ngIf=\"_routeParams.get('videoid')\">\n    \t\t\t<player></player>\n    \t\t</div>\n\t\t</div>\n    ",
+                        styles: ["\n        .body {\n            width: 90%;\n            margin-left: auto;\n            margin-right: auto;\n            margin-top: 2%;\n        }\n    "],
                         directives: [
                             games_component_1.GamesComponent,
                             channels_component_1.ChannelsComponent,

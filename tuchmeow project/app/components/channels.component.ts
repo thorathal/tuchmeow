@@ -3,6 +3,7 @@ import {HTTP_PROVIDERS} from 'angular2/http';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';
 import {Observable} from 'rxjs/Observable';
 
+import {ChannelSnippet} from '../interfaces/channel_snippet';
 import {YoutubeService} from '../services/youtube.service';
 
 @Component({
@@ -31,21 +32,18 @@ import {YoutubeService} from '../services/youtube.service';
 })
 export class ChannelsComponent implements OnInit {
     isLoading = true;
-    channels: any[];
+    channels: ChannelSnippet;
 
     constructor(private _youtubeService: YoutubeService,
-        private _routeParams: RouteParams) {
+                private _routeParams: RouteParams) {
     }
 
     ngOnInit() {
         this._youtubeService.getChannels(this._routeParams.get('game'))
             .subscribe(
                 res => this.channels = res.items,
-                err => {
-                    console.error(err);
-                    this.isLoading = false;
-                },
+                err => console.error(err),
                 () => this.isLoading = false
-                );
+            );
     }
 }

@@ -1,4 +1,4 @@
-export interface Video_ContentDetails {
+export interface VideoContentDetails {
     items: [{
         contentDetails: {
             duration: string;

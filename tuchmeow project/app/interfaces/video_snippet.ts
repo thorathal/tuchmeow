@@ -1,4 +1,4 @@
-export interface Video_Snippet{
+export interface VideoSnippet{
     items: [{
         id: {
             videoId: string

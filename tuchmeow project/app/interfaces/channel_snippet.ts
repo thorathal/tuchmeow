@@ -1,4 +1,4 @@
-export interface Channel_Snippet{
+export interface ChannelSnippet{
     items: [{
         id: string;
         snippet: {

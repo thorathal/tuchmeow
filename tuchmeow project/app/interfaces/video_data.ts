@@ -1,4 +1,4 @@
-export interface Video_Data{
+export interface VideoData{
     id: string,
     title: string,
     thumbnailUrl: string,

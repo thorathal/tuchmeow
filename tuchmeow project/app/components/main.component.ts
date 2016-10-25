@@ -9,20 +9,30 @@ import {PlayerComponent} from './player.component';
 @Component({
     selector: 'main',
     template: `
-		<games></games>
-
-		<div *ngIf="_routeParams.get('game')">
-			<channels></channels>
-		</div>
-
-		<div *ngIf="_routeParams.get('channelid') && !_routeParams.get('videoid')">
-			<videos></videos>
-		</div>
-
-		<div *ngIf="_routeParams.get('videoid')">
-			<player></player>
+        <div class="body">
+    		<games></games>
+    
+    		<div *ngIf="_routeParams.get('game')">
+    			<channels></channels>
+    		</div>
+    
+    		<div *ngIf="_routeParams.get('channelid') && !_routeParams.get('videoid')">
+    			<videos></videos>
+    		</div>
+    
+    		<div *ngIf="_routeParams.get('videoid')">
+    			<player></player>
+    		</div>
 		</div>
     `,
+    styles: [`
+        .body {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 2%;
+        }
+    `],
 	directives: [
         GamesComponent,
         ChannelsComponent,

@@ -30,8 +30,7 @@ System.register(['angular2/core', 'angular2/router', './components/main.componen
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'my-app',
-                        template: "\n        <div class=\"body\">\n            <router-outlet></router-outlet>\n        </div>\n    ",
-                        styles: ["\n        .body {\n            width: 90%;\n            margin-left: auto;\n            margin-right: auto;\n            margin-top: 2%;\n        }\n    "],
+                        template: "\n        \n        <router-outlet></router-outlet>\n        \n    ",
                         directives: [router_1.ROUTER_DIRECTIVES]
                     }),
                     router_1.RouteConfig([
