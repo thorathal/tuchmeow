@@ -35,13 +35,14 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', '../servic
                 }
                 ChannelsComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    // loads the channels based on the game selected.
                     this._youtubeService.getChannels(this._routeParams.get('game'))
                         .subscribe(function (res) { return _this.channels = res.items; }, function (err) { return console.error(err); }, function () { return _this.isLoading = false; });
                 };
                 ChannelsComponent = __decorate([
                     core_1.Component({
                         selector: 'channels',
-                        template: "\n    \t<div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n\n        <ul class=\"channels\" *ngFor=\"#channel of channels\">\n            <li class=\"lockup\">\n                <a title=\"{{ channel.snippet.description }}\" [routerLink]=\"['Channel', { game: _routeParams.get('game'), channelid: channel.id }]\">\n                    <img class=\"media-object\" src=\"{{ channel.snippet.thumbnails.medium.url }}\">\n                    <span class=\"video-time\" aria-hidden=\"true\">\n                        {{ channel.snippet.title }}\n                    </span>\n                </a>\n            </li>\n        </ul>\n\n\t    <br/>\n\t",
+                        template: "\n    \t<div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n\n        <!-- Setup a menu/row of channels -->\n        <ul class=\"channels\" *ngFor=\"#channel of channels\">\n            <li class=\"lockup\">\n                <a title=\"{{ channel.snippet.description }}\" [routerLink]=\"['Channel', { game: _routeParams.get('game'), channelid: channel.id }]\">\n                    <img class=\"media-object\" src=\"{{ channel.snippet.thumbnails.medium.url }}\">\n                    <span class=\"video-time\" aria-hidden=\"true\">\n                        {{ channel.snippet.title }}\n                    </span>\n                </a>\n            </li>\n        </ul>\n\t",
                         styleUrls: ['app/css/page-styling.css'],
                         providers: [youtube_service_1.YoutubeService, http_1.HTTP_PROVIDERS],
                         directives: [router_1.ROUTER_DIRECTIVES]

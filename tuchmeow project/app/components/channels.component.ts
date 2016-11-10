@@ -13,6 +13,7 @@ import {YoutubeService} from '../services/youtube.service';
             <i class="fa fa-spinner fa-spin fa-3x"></i>
         </div>
 
+        <!-- Setup a menu/row of channels -->
         <ul class="channels" *ngFor="#channel of channels">
             <li class="lockup">
                 <a title="{{ channel.snippet.description }}" [routerLink]="['Channel', { game: _routeParams.get('game'), channelid: channel.id }]">
@@ -23,8 +24,6 @@ import {YoutubeService} from '../services/youtube.service';
                 </a>
             </li>
         </ul>
-
-	    <br/>
 	`,
     styleUrls: ['app/css/page-styling.css'],
     providers: [YoutubeService, HTTP_PROVIDERS],
@@ -39,6 +38,7 @@ export class ChannelsComponent implements OnInit {
     }
 
     ngOnInit() {
+        // loads the channels based on the game selected.
         this._youtubeService.getChannels(this._routeParams.get('game'))
             .subscribe(
                 res => this.channels = res.items,

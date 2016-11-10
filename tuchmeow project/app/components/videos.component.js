@@ -35,19 +35,17 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', '../servic
                 }
                 VideosComponent.prototype.ngOnInit = function () {
                     var _this = this;
+                    // Loads the videos from the selected channel, that also fit the game selected.
                     this._youtubeService.getVideos(this._routeParams.get('channelid'), this._routeParams.get('game'))
                         .subscribe(function (videos) {
                         _this._youtubeService.getVideoDurations(videos)
-                            .subscribe(function (durations) {
-                            _this.videos = _this._youtubeService.mergeArrays(videos, durations);
-                            _this.isLoading = false;
-                        });
+                            .subscribe(function (durations) { return _this.videos = _this._youtubeService.mergeArrays(videos, durations); }, function (err) { return console.log(err); }, function () { return _this.isLoading = false; });
                     });
                 };
                 VideosComponent = __decorate([
                     core_1.Component({
                         selector: 'videos',
-                        template: "\n        <div class=\"video-area\">\n            <h2>Videos</h2>\n             <ul class=\"videos\" *ngFor=\"#video of videos\">\n                <li>\n                    <div class=\"lockup\">\n                        <a area-hidden=\"true\" [routerLink]=\"['Video', { game: _routeParams.get('game'), channelid: _routeParams.get('channelid'), videoid: video.id }]\">\n                            <img class=\"media-object\" src=\"{{ video.thumbnailUrl }}\">\n                            <span class=\"video-time\" aria-hidden=\"true\">\n                                {{ video.duration }}\n                            </span>\n                        </a>\n                    </div>\n                    <div class=\"textwrap\">\n                        <a title=\"{{ video.title }}\" [routerLink]=\"['Video', { game: _routeParams.get('game'), channelid: _routeParams.get('channelid'), videoid: video.id }]\">\n                            <b>{{ video.title }}</b>\n                        </a>\n                    </div>\n                </li>\n            </ul>\n        </div>\n    ",
+                        template: "\n        <div class=\"video-area\">\n            <h2>Videos</h2>\n            \n            <div *ngIf=\"isLoading\">\n                <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n            </div>\n            \n            <!-- Setup the video suggestions for the selected channel -->\n             <ul class=\"videos\" *ngFor=\"#video of videos\">\n                <li>\n                    <div class=\"lockup\">\n                        <a area-hidden=\"true\" [routerLink]=\"['Video', { game: _routeParams.get('game'), channelid: _routeParams.get('channelid'), videoid: video.id }]\">\n                            <img class=\"media-object\" src=\"{{ video.thumbnailUrl }}\">\n                            <span class=\"video-time\" aria-hidden=\"true\">\n                                {{ video.duration }}\n                            </span>\n                        </a>\n                    </div>\n                    <div class=\"textwrap\">\n                        <a title=\"{{ video.title }}\" [routerLink]=\"['Video', { game: _routeParams.get('game'), channelid: _routeParams.get('channelid'), videoid: video.id }]\">\n                            <b>{{ video.title }}</b>\n                        </a>\n                    </div>\n                </li>\n            </ul>\n        </div>\n    ",
                         styleUrls: ['app/css/page-styling.css'],
                         providers: [youtube_service_1.YoutubeService, http_1.HTTP_PROVIDERS],
                         directives: [router_1.ROUTER_DIRECTIVES]

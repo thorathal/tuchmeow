@@ -12,27 +12,26 @@ import {PlayerComponent} from './player.component';
         <div class="body">
     		<games></games>
     
+            <!-- If a game has been selected, show the channels -->
     		<div *ngIf="_routeParams.get('game')">
     			<channels></channels>
     		</div>
-    
+            
+            <br/>
+            <br/>
+            
+            <!-- If a channel but not a video has been a selected, show videos -->
     		<div *ngIf="_routeParams.get('channelid') && !_routeParams.get('videoid')">
     			<videos></videos>
     		</div>
     
+            <!-- If a video has been selected, show the videoplayer -->
     		<div *ngIf="_routeParams.get('videoid')">
     			<player></player>
     		</div>
 		</div>
     `,
-    styles: [`
-        .body {
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 2%;
-        }
-    `],
+    styleUrls: ['app/css/page-styling.css'],
 	directives: [
         GamesComponent,
         ChannelsComponent,

@@ -12,7 +12,7 @@ import {GameService} from '../services/game.service';
             <i class="fa fa-spinner fa-spin fa-3x"></i>
         </div>
 
-        <!-- Setup a menu of games -->
+        <!-- Setup a menu/row of games -->
         <ul class="games" *ngFor="#game of games">
             <li [routerLink]="['Game', { game: game.id }]">
                 <a title="{{ game.name }}">

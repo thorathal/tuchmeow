@@ -28,7 +28,8 @@ System.register(['angular2/core', 'angular2/router'], function(exports_1, contex
                 PlayerComponent = __decorate([
                     core_1.Component({
                         selector: 'player',
-                        template: "\n        <div style=\"text-align: center\">\n\n            <iframe width=\"80%\" height=\"62%\" src=\"https://www.youtube.com/embed/{{ _routeParams.get('videoid') }}\" frameborder=\"0\" allowfullscreen>\n            </iframe>\n\n        </div>\n    "
+                        template: "\n        <div style=\"text-align: center\">\n            \n            <!-- The Youtube video-player \"frame\" --> \n            <iframe class=\"player\" width=\"80%\" height=\"62%\" \n                    src=\"https://www.youtube.com/embed/{{ _routeParams.get('videoid') }}\" \n                    frameborder=\"0\" allowfullscreen>\n            </iframe>\n            \n        </div>\n    ",
+                        styleUrls: ['app/css/page-styling.css']
                     }), 
                     __metadata('design:paramtypes', [router_1.RouteParams])
                 ], PlayerComponent);

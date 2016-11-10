@@ -5,10 +5,10 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
-import {Channel_Snippet} from '../interfaces/channel_snippet';
-import {Video_Snippet} from '../interfaces/video_snippet';
-import {Video_ContentDetails} from '../interfaces/video_contentDetails';
-import {Video_Data} from '../interfaces/video_data';
+import {ChannelSnippet} from '../interfaces/channel_snippet';
+import {VideoSnippet} from '../interfaces/video_snippet';
+import {VideoContentDetails} from '../interfaces/video_contentDetails';
+import {VideoData} from '../interfaces/video_data';
 
 @Injectable()
 export class YoutubeService {
@@ -61,11 +61,11 @@ export class YoutubeService {
     
     
     /**
-     * Fetches the channels relevant to the game chosen from the google API.
-     * Input: gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'.
-     * Output: Observable<Channel_Response>.
+     * Fetches the channels relevant to the game chosen from the google API. <br>
+     * @param gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'. <br>
+     * @return Observable<Channel_Response>. <br>
      */
-    getChannels(gameType: string): Observable<Channel_Snippet> {
+    getChannels(gameType: string): Observable<ChannelSnippet> {
         var request = this.CHANNELDATA_BASE_URL + this.channelIDs[gameType] + this.CHANNELDATA_FIELDS + this.API_KEY;
         return this._http.get(request)
             .map(res => res.json());
@@ -95,10 +95,13 @@ export class YoutubeService {
     };
     
     /**
-     * Fetches the newest videos relevant to the channel and game chosen.
-     * Then fetches the durations for those videos.
+     * Fetches the newest videos relevant to the channel and game chosen. <br>
+     * Then fetches the durations for those videos. <br>
+     * @input channelID - string with the videoID for the Youtube video. <br>
+     * @input game - string with the name of the game. Used to identify the relevant videos. <br>
+     * @return Observable<VideoSnippet> - Observable containing the array Video_Snippet. 
      */
-    getVideos(channelID: string, game: string): Observable<Video_Snippet> {
+    getVideos(channelID: string, game: string): Observable<VideoSnippet> {
         var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.gameSearchKeys[game] + this.API_KEY;
         console.log("Getting latest videos: " + request);
         return this._http.get(request)
@@ -109,8 +112,13 @@ export class YoutubeService {
     // Search on specific videos and get their durations.
     private VIDEODURATION_BASE_URL = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=";
     private VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
-    
-    getVideoDurations(videos : Video_Snippet) : Observable<Video_ContentDetails> {
+    /**
+     * Fetches the newest videos relevant to the channel and game chosen. <br>
+     * Then fetches the durations for those videos. <br>
+     * @input videos - Video_Snippet a custom array fetched from the Youtube servers. <br>
+     * @return Observable<VideoContentDetails> - Observable containing the array Video_ContentDetails. 
+     */
+    getVideoDurations(videos : VideoSnippet) : Observable<VideoContentDetails> {
         
         var ids = "";
         for(let i=0; i < this.VIDEO_NUM; i++) {
@@ -124,9 +132,15 @@ export class YoutubeService {
         return this._http.get(request).map(res => res.json());
     }
     
-    mergeArrays(videos : Video_Snippet, durations : Video_ContentDetails) : Video_Data[] {
+    /**
+     * Merges the two Arrays into a new one. <br>
+     * @input videos Video_Snippet a custom array fetched from the Youtube servers. <br>
+     * @input durations Video_ContentDetails a custom array fetched from the Youtube servers. <br>
+     * @return Video_Data[] a more simple array containing all relevant information.
+     */
+    mergeArrays(videos : VideoSnippet, durations : VideoContentDetails) : VideoData[] {
             
-        var videoDetails: any[];
+        var videoData: VideoData[];
         for (var i = 0; i < this.VIDEO_NUM; i++) {
             var tmpDur = durations.items[i].contentDetails.duration;
             tmpDur = tmpDur.replace("PT", "");
@@ -135,7 +149,7 @@ export class YoutubeService {
             tmpDur = tmpDur.replace("S", "");
 
             if (i == 0) {
-                videoDetails = [{
+                videoData = [{
                     "id" : videos.items[i].id.videoId,
                     "title": videos.items[i].snippet.title,
                     "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
@@ -144,7 +158,7 @@ export class YoutubeService {
             }
             else {
 
-                videoDetails.push({
+                videoData.push({
                     "id" : videos.items[i].id.videoId,
                     "title": videos.items[i].snippet.title,
                     "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
@@ -153,7 +167,7 @@ export class YoutubeService {
             }
         }
         
-        return videoDetails;
+        return videoData;
     }
 
 }

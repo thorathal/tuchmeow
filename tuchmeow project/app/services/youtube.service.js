@@ -79,9 +79,9 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                     this.VIDEODURATION_FIELDS = "&fields=items(contentDetails(duration))";
                 }
                 /**
-                 * Fetches the channels relevant to the game chosen from the google API.
-                 * Input: gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'.
-                 * Output: Observable<Channel_Response>.
+                 * Fetches the channels relevant to the game chosen from the google API. <br>
+                 * @param gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'. <br>
+                 * @return Observable<Channel_Response>. <br>
                  */
                 YoutubeService.prototype.getChannels = function (gameType) {
                     var request = this.CHANNELDATA_BASE_URL + this.channelIDs[gameType] + this.CHANNELDATA_FIELDS + this.API_KEY;
@@ -89,8 +89,11 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                         .map(function (res) { return res.json(); });
                 };
                 /**
-                 * Fetches the newest videos relevant to the channel and game chosen.
-                 * Then fetches the durations for those videos.
+                 * Fetches the newest videos relevant to the channel and game chosen. <br>
+                 * Then fetches the durations for those videos. <br>
+                 * @input channelID - string with the videoID for the Youtube video. <br>
+                 * @input game - string with the name of the game. Used to identify the relevant videos. <br>
+                 * @return Observable<VideoSnippet> - Observable containing the array Video_Snippet.
                  */
                 YoutubeService.prototype.getVideos = function (channelID, game) {
                     var request = this.VIDEODATA_BASE_URL + channelID + this.VIDEODATA_FIELDS + this.gameSearchKeys[game] + this.API_KEY;
@@ -98,6 +101,12 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                     return this._http.get(request)
                         .map(function (res) { return res.json(); });
                 };
+                /**
+                 * Fetches the newest videos relevant to the channel and game chosen. <br>
+                 * Then fetches the durations for those videos. <br>
+                 * @input videos - Video_Snippet a custom array fetched from the Youtube servers. <br>
+                 * @return Observable<VideoContentDetails> - Observable containing the array Video_ContentDetails.
+                 */
                 YoutubeService.prototype.getVideoDurations = function (videos) {
                     var ids = "";
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
@@ -108,8 +117,14 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                     var request = this.VIDEODURATION_BASE_URL + ids + this.VIDEODURATION_FIELDS + this.API_KEY;
                     return this._http.get(request).map(function (res) { return res.json(); });
                 };
+                /**
+                 * Merges the two Arrays into a new one. <br>
+                 * @input videos Video_Snippet a custom array fetched from the Youtube servers. <br>
+                 * @input durations Video_ContentDetails a custom array fetched from the Youtube servers. <br>
+                 * @return Video_Data[] a more simple array containing all relevant information.
+                 */
                 YoutubeService.prototype.mergeArrays = function (videos, durations) {
-                    var videoDetails;
+                    var videoData;
                     for (var i = 0; i < this.VIDEO_NUM; i++) {
                         var tmpDur = durations.items[i].contentDetails.duration;
                         tmpDur = tmpDur.replace("PT", "");
@@ -117,7 +132,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                         tmpDur = tmpDur.replace("M", ":");
                         tmpDur = tmpDur.replace("S", "");
                         if (i == 0) {
-                            videoDetails = [{
+                            videoData = [{
                                     "id": videos.items[i].id.videoId,
                                     "title": videos.items[i].snippet.title,
                                     "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
@@ -125,7 +140,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                                 }];
                         }
                         else {
-                            videoDetails.push({
+                            videoData.push({
                                 "id": videos.items[i].id.videoId,
                                 "title": videos.items[i].snippet.title,
                                 "thumbnailUrl": videos.items[i].snippet.thumbnails.medium.url,
@@ -133,7 +148,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                             });
                         }
                     }
-                    return videoDetails;
+                    return videoData;
                 };
                 YoutubeService = __decorate([
                     core_1.Injectable(), 

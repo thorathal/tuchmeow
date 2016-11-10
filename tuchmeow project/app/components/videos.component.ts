@@ -11,6 +11,12 @@ import {YoutubeService} from '../services/youtube.service';
     template: `
         <div class="video-area">
             <h2>Videos</h2>
+            
+            <div *ngIf="isLoading">
+                <i class="fa fa-spinner fa-spin fa-3x"></i>
+            </div>
+            
+            <!-- Setup the video suggestions for the selected channel -->
              <ul class="videos" *ngFor="#video of videos">
                 <li>
                     <div class="lockup">
@@ -43,15 +49,15 @@ export class VideosComponent implements OnInit {
     }
 
     ngOnInit() {
+        // Loads the videos from the selected channel, that also fit the game selected.
         this._youtubeService.getVideos(this._routeParams.get('channelid'), this._routeParams.get('game'))
                 .subscribe(
                     videos => {
                         this._youtubeService.getVideoDurations(videos)
                             .subscribe(
-                                durations => {
-                                    this.videos = this._youtubeService.mergeArrays(videos, durations);
-                                    this.isLoading = false;
-                                }
+                                durations => this.videos = this._youtubeService.mergeArrays(videos, durations),
+                                err => console.log(err),
+                                () => this.isLoading = false   
                             );
                     }
                 );

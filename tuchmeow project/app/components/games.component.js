@@ -40,7 +40,7 @@ System.register(['angular2/core', 'angular2/http', 'angular2/router', '../servic
                 GamesComponent = __decorate([
                     core_1.Component({
                         selector: 'games',
-                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n\n        <!-- Setup a menu of games -->\n        <ul class=\"games\" *ngFor=\"#game of games\">\n            <li [routerLink]=\"['Game', { game: game.id }]\">\n                <a title=\"{{ game.name }}\">\n                    <img class=\" cell media-object\" src=\"{{ game.imageUrl }}\">\n                </a>\n            </li>\n        </ul>\n    \t",
+                        template: "\n        <div *ngIf=\"isLoading\">\n            <i class=\"fa fa-spinner fa-spin fa-3x\"></i>\n        </div>\n\n        <!-- Setup a menu/row of games -->\n        <ul class=\"games\" *ngFor=\"#game of games\">\n            <li [routerLink]=\"['Game', { game: game.id }]\">\n                <a title=\"{{ game.name }}\">\n                    <img class=\" cell media-object\" src=\"{{ game.imageUrl }}\">\n                </a>\n            </li>\n        </ul>\n    \t",
                         styleUrls: ['app/css/page-styling.css'],
                         providers: [game_service_1.GameService, http_1.HTTP_PROVIDERS],
                         directives: [router_1.ROUTER_DIRECTIVES]
