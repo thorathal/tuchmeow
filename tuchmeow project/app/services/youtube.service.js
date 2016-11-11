@@ -1,3 +1,6 @@
+/**
+ * @author Bjarke Carlsen
+ */
 System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxjs/add/operator/mergeMap'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;

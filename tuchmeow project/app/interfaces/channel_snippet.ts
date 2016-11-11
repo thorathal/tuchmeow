@@ -1,3 +1,7 @@
+/**
+ * @author Bjarke Carlsen
+ */
+
 export interface ChannelSnippet{
     items: [{
         id: string;

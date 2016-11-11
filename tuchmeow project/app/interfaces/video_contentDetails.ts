@@ -1,3 +1,7 @@
+/**
+ * @author Bjarke Carlsen
+ */
+
 export interface VideoContentDetails {
     items: [{
         contentDetails: {

@@ -1,3 +1,7 @@
+/**
+ * @author Bjarke Carlsen
+ */
+
 import {Component, OnInit} from 'angular2/core';
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {RouteParams, ROUTER_DIRECTIVES} from 'angular2/router';

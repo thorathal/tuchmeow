@@ -1,3 +1,6 @@
+/**
+ * @author Bjarke Carlsen
+ */
 System.register(['angular2/core', 'angular2/router', './components/main.component'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
