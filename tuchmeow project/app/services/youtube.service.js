@@ -80,7 +80,7 @@ System.register(['angular2/core', 'angular2/http', 'rxjs/add/operator/map', 'rxj
                 }
                 /**
                  * Fetches the channels relevant to the game chosen from the google API. <br>
-                 * @param gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'. <br>
+                 * @input gameType - string: 'CSGO', 'DOTA2', 'LOL', 'HS', 'SC2'. <br>
                  * @return Observable<Channel_Response>. <br>
                  */
                 YoutubeService.prototype.getChannels = function (gameType) {
